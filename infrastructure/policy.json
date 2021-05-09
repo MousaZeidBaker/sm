@@ -1,0 +1,54 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "tag:GetResources"
+      ],
+      "Resource": "arn:aws:ssm:DUMMY_REGION:*:parameter/sm/*",
+      "Condition": {
+        "StringEquals": {
+          "cognito-identity.amazonaws.com:aud": "DUMMY_IDENTITY_POOL_ID"
+        }
+      }
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ssm:GetParameter",
+        "ssm:GetParameters",
+        "ssm:DeleteParameter"
+      ],
+      "Resource": "arn:aws:ssm:DUMMY_REGION:*:parameter/sm/*",
+      "Condition": {
+        "StringEquals": {
+          "aws:ResourceTag/identityId": "${cognito-identity.amazonaws.com:sub}",
+          "cognito-identity.amazonaws.com:aud": "DUMMY_IDENTITY_POOL_ID"
+        }
+      }
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ssm:PutParameter",
+        "ssm:AddTagsToResource"
+      ],
+      "Resource": "arn:aws:ssm:DUMMY_REGION:*:parameter/sm/*",
+      "Condition": {
+        "StringEquals": {
+          "cognito-identity.amazonaws.com:aud": "DUMMY_IDENTITY_POOL_ID"
+        },
+        "StringEqualsIfExists": {
+          "aws:RequestTag/identityId": "${cognito-identity.amazonaws.com:sub}"
+        },
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "identityId",
+            "type"
+          ]
+        }
+      }
+    }
+  ]
+}

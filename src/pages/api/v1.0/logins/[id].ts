@@ -4,7 +4,6 @@ import { withMiddleware } from '../../../../backend/middlewares'
 import { LoginItemApi } from '../../../../backend/models/login/login-item-api'
 import { logger } from '../../../../backend/lib/logger/logger'
 import { MethodNotAllowedHttpResponse, NotFoundHttpResponse, InternalServerHttpResponse } from '../../../../backend/errors/http-errors'
-import { NotFoundException } from '../../../../backend/errors/exceptions'
 import { LoginItemParameterStoreRepository } from '../../../../backend/repositories/login/login-item-parameter-store-repository'
 import { LoginItemRepository } from '../../../../backend/repositories/login/login-item-repository'
 
@@ -27,8 +26,8 @@ async function getRequest (req: NextApiRequest, res: NextApiResponse): Promise<v
   } catch (err) {
     logger.info('Failed to get login item:', [ err ])
 
-    switch(err.constructor) {
-      case NotFoundException: {
+    switch(err.name) {
+      case 'NotFoundException': {
         res.status(404).json(NotFoundHttpResponse)
         return
       }
@@ -75,8 +74,8 @@ async function patchRequest (req: NextApiRequest, res: NextApiResponse): Promise
   } catch (err) {
     logger.info('Failed to update login item:', [ err ])
 
-    switch(err.constructor) {
-      case NotFoundException: {
+    switch(err.name) {
+      case 'NotFoundException': {
         res.status(404).json(NotFoundHttpResponse)
         return
       }
@@ -116,8 +115,8 @@ async function deleteRequest (req: NextApiRequest, res: NextApiResponse): Promis
   } catch (err) {
     logger.info('Failed to delete login item:', [ err ])
 
-    switch(err.constructor) {
-      case NotFoundException: {
+    switch(err.name) {
+      case 'NotFoundException': {
         res.status(404).json(NotFoundHttpResponse)
         return
       }

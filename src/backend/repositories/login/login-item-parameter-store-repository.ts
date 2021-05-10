@@ -67,7 +67,7 @@ export class LoginItemParameterStoreRepository implements LoginItemRepository {
     let response: SSM.GetParameterResult
     try {
       response = await getParameter(this.ssmClient, name)
-    } catch (err) {  
+    } catch (err) {
       switch(err.name) {
         case 'ParameterNotFound':
         // AccessDeniedException is considered not found due to the IAM policy is
@@ -75,7 +75,7 @@ export class LoginItemParameterStoreRepository implements LoginItemRepository {
         // not belong to the currently logged in user, even if they do not exist.
         case 'AccessDeniedException':
         case 'ParameterVersionNotFound': {
-          throw new NotFoundException
+          throw NotFoundException
         }
         default: {
           throw err

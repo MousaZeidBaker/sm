@@ -1,27 +1,29 @@
 import React from 'react'
 import Dialog from '@material-ui/core/Dialog'
 import DialogTitle from '@material-ui/core/DialogTitle'
-import { LoginItemDialog, LoginItemFormValues } from './login-item-form'
-import useSession from '../useSession'
-import { useSnackbar } from 'notistack'
+import { LoginItemDialog } from './login-item-form'
+import { LoginItemApi } from '../../backend/models/login/login-item-api'
 
 interface Props {
   open: boolean
   setOpen: (open: boolean) => void
-  itemType: string
-  handleAdd: () => void
+  handleAdd: (item: LoginItemApi) => void
 }
 
 export function AddLoginItemFormDialog(props: Props): JSX.Element {
-  const initialFormValues: LoginItemFormValues = {
-    title: '',
-    username: '',
-    secret: '',
-    path: '/'
+  // Prepare empty item
+  const dummyItem: LoginItemApi = {
+    id: '',
+    type: 'logins',
+    attributes: {
+      version: 0,
+      lastModifiedDate: new Date(), 
+      title: '',
+      path: '/',
+      username: '',
+      secret: ''
+    }
   }
-
-  const { session } = useSession()
-  const { enqueueSnackbar } = useSnackbar()
 
   /**
    * Handles close event
@@ -35,40 +37,16 @@ export function AddLoginItemFormDialog(props: Props): JSX.Element {
   /**
    * Handles add event
    * 
-   * @param {LoginItemFormValues} formValues - The form values
+   * @param {LoginItemApi} item - The item to add
    * 
    * @return {Promise<void>}
    */
-  const handleAdd = async (formValues: LoginItemFormValues): Promise<void> => {
-    // Close dialog immediately, use snackbar to inform user about the process
+  const handleAdd = async (item: LoginItemApi): Promise<void> => {
+    // Close dialog immediately
     props.setOpen(false)
-    enqueueSnackbar("Adding item...", { variant: 'info' })
-
-    // API request to add new login item
-    const response = await fetch(`/api/v1.0/${props.itemType}`, {
-      method: 'POST',
-      headers: {
-        'Authorization': session?.idToken || '',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        'data': {
-          'type': props.itemType,
-          'attributes': formValues
-        }
-      })
-    })
-
-    // Show snackbar message
-    if (response.status === 200) {
-      enqueueSnackbar("Success! Item added.", { variant: 'success' })
-    } else {
-      enqueueSnackbar("Error! Couldn't add item.", { variant: 'error' })
-      return
-    }
 
     // Execute parent component functionality
-    props.handleAdd()
+    props.handleAdd(item)
   }
 
   return (
@@ -80,11 +58,10 @@ export function AddLoginItemFormDialog(props: Props): JSX.Element {
       >
         <DialogTitle id='form-dialog-title'>Add item</DialogTitle>
         <LoginItemDialog
-          initialFormValues={initialFormValues}
           open={props.open}
           setOpen={props.setOpen}
-          itemType={props.itemType}
-          handleSave={handleAdd}
+          item={dummyItem}
+          handleSave={(item: LoginItemApi) => handleAdd(item)}
         />
       </Dialog>
     </>

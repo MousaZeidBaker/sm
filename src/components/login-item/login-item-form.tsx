@@ -8,6 +8,7 @@ import SaveIcon from '@material-ui/icons/Save'
 import { GeneratePassword } from '../generate-password'
 import { CopyContentIcon } from '../../icons/content_copy-icon'
 import { makeStyles } from '@material-ui/core'
+import { LoginItemApi } from '../../backend/models/login/login-item-api'
 
 const useStyles = makeStyles({
   button: {
@@ -17,21 +18,20 @@ const useStyles = makeStyles({
 
 export interface LoginItemFormValues {
   title: string
+  path: string
   username: string
   secret: string
-  path: string
 }
 
 interface Props {
-  initialFormValues: LoginItemFormValues
   open: boolean
   setOpen: (open: boolean) => void
-  itemType: string
-  handleSave: (formValues: LoginItemFormValues) => void
+  item: LoginItemApi
+  handleSave: (item: LoginItemApi) => void
 }
 
 export function LoginItemDialog(props: Props): JSX.Element {
-  const [formValues, setFormValues] = React.useState<LoginItemFormValues>(props.initialFormValues)
+  const [formValues, setFormValues] = React.useState<LoginItemFormValues>(props.item.attributes)
   const [titleTextFieldError, setTitleTextFieldError] = React.useState<boolean>(false)
   const [usernameTextFieldError, setUsernameTextFieldError] = React.useState<boolean>(false)
   const [passwordTextFieldError, setPasswordTextFieldError] = React.useState<boolean>(false)
@@ -48,8 +48,8 @@ export function LoginItemDialog(props: Props): JSX.Element {
       if (titleTextFieldError || usernameTextFieldError || passwordTextFieldError) disable = true
       
       // Disable button if one of the fields are empty
-      Object.values(formValues).forEach(item => {
-        if (item === '') disable = true
+      Object.values(formValues).forEach(value => {
+        if (value === '') disable = true
       })
 
       setDisableSaveButton(disable)
@@ -65,7 +65,7 @@ export function LoginItemDialog(props: Props): JSX.Element {
   const handleClose = (): void => {
     props.setOpen(false)
     // Restore form values to their initial value
-    setFormValues(props.initialFormValues)
+    setFormValues(props.item.attributes)
 
     // Restore text field error indicator
     setTitleTextFieldError(false)
@@ -81,38 +81,38 @@ export function LoginItemDialog(props: Props): JSX.Element {
    * 
    * @return {void}
    */
-    const validateInput = (key: keyof LoginItemFormValues, value: string): void => {
-      const pattern = new RegExp(/^[a-zA-Z0-9!\"#$%&'()*+,-./:;<=>?@[\\\]\^_`{\|}~]{1,50}$/gm)
-      switch(key) {
-        case 'title': {
-          if (value?.match(pattern)) {
-            setTitleTextFieldError(false)
-          } else {
-            setTitleTextFieldError(true)
-          }
-          return
+  const validateInput = (key: keyof LoginItemFormValues, value: string): void => {
+    const pattern = new RegExp(/^[a-zA-Z0-9!\"#$%&'()*+,-./:;<=>?@[\\\]\^_`{\|}~]{1,50}$/gm)
+    switch(key) {
+      case 'title': {
+        if (value?.match(pattern)) {
+          setTitleTextFieldError(false)
+        } else {
+          setTitleTextFieldError(true)
         }
-        case 'username': {
-          if (value?.match(pattern)) {
-            setUsernameTextFieldError(false)
-          } else {
-            setUsernameTextFieldError(true)
-          }
-          return
+        return
+      }
+      case 'username': {
+        if (value?.match(pattern)) {
+          setUsernameTextFieldError(false)
+        } else {
+          setUsernameTextFieldError(true)
         }
-        case 'secret': {
-          if (value?.match(pattern)) {
-            setPasswordTextFieldError(false)
-          } else {
-            setPasswordTextFieldError(true)
-          }
-          return
+        return
+      }
+      case 'secret': {
+        if (value?.match(pattern)) {
+          setPasswordTextFieldError(false)
+        } else {
+          setPasswordTextFieldError(true)
         }
-        default: {
-          return
-        }
+        return
+      }
+      default: {
+        return
       }
     }
+  }
 
   /**
    * Handles form value change event
@@ -133,14 +133,24 @@ export function LoginItemDialog(props: Props): JSX.Element {
    * @return {Promise<void>}
    */
   const handleSave = async (): Promise<void> => {
-    // Close dialog immediately, use snackbar to inform user about the process
+    // Close dialog immediately
     props.setOpen(false)
 
+    // Prepare new item
+    const item: LoginItemApi = {
+      id: props.item.id,
+      type: props.item.type,
+      attributes: {
+        version: props.item.attributes.version + 1,
+        lastModifiedDate: new Date(), 
+        title: formValues.title,
+        path: formValues.path,
+        username: formValues.username,
+        secret: formValues.secret
+      }
+    }
     // Execute parent component functionality
-    props.handleSave(formValues)
-
-    // Restore form values to their initial value
-    setFormValues(props.initialFormValues)
+    props.handleSave(item)
   }
 
   return (

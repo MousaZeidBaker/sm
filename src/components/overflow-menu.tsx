@@ -5,15 +5,11 @@ import MenuItem from '@material-ui/core/MenuItem'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
 import { DeleteItemAlertDialog } from './delete-item-alert-dialog'
 import { EditLoginItemFormDialog } from './login-item/edit-login-item-form-dialog'
+import { LoginItemApi } from '../backend/models/login/login-item-api'
 
 interface Props {
-  id: string
-  title: string
-  username: string
-  secret: string
-  path: string
-  itemType: string
-  handleEdit: () => void
+  item: LoginItemApi
+  handleEdit: (item: LoginItemApi) => void
   handleDelete: () => void
 }
 
@@ -57,11 +53,13 @@ export function OverflowMenu(props: Props): JSX.Element {
   /**
    * Handles edit event
    * 
+   * @param {LoginItemApi} item - The item to update
+   * 
    * @return {void}
    */
-  const handleEdit = (): void => {
+  const handleEdit = (item: LoginItemApi): void => {
     // Execute parent component functionality
-    props.handleEdit()
+    props.handleEdit(item)
   }
 
   /**
@@ -118,8 +116,7 @@ export function OverflowMenu(props: Props): JSX.Element {
           <DeleteItemAlertDialog
             open={openDeleteAlertDialog}
             setOpen={setOpenDeleteAlertDialog}
-            id={props.id}
-            itemType={props.itemType}
+            item={props.item}
             handleDelete={handleDelete}
           />
       </>
@@ -128,15 +125,8 @@ export function OverflowMenu(props: Props): JSX.Element {
         <EditLoginItemFormDialog
           open={openEditFormDialog}
           setOpen={setOpenEditFormDialog}
-          id={props.id}
-          itemType={props.itemType}
-          values={{
-            title: props.title,
-            username: props.username,
-            secret: props.secret,
-            path: props.path
-          }}
-          handleEdit={handleEdit}
+          item={props.item}
+          handleEdit={(item: LoginItemApi) => handleEdit(item)}
         />
       </>
     </>

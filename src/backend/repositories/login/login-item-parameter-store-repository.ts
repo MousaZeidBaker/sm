@@ -1,5 +1,4 @@
-import { getParameters } from '../../lib/aws/aws-parameter-store/list-parameters'
-import { getResourcesRecursive } from '../../lib/aws/aws-resource-groups-tagging-api/get-resources'
+import { getParametersByPathRecursive } from '../../lib/aws/aws-parameter-store/list-parameters'
 import { getParameter } from '../../lib/aws/aws-parameter-store/get-parameter'
 import { deleteParameter } from '../../lib/aws/aws-parameter-store/delete-parameter'
 import { createParameter, updateParameter } from '../../lib/aws/aws-parameter-store/put-parameter'
@@ -92,42 +91,12 @@ export class LoginItemParameterStoreRepository implements LoginItemRepository {
   }
 
   public async list(): Promise<LoginItem[]> {
-    // Fetch ssm resources tagged with the identity id of the currently authenticated user. Note
-    // the actual parameters are fetched in a subsequent request.
-    const getResourcesResponse = await getResourcesRecursive(
-      this.resourceGroupsTaggingAPIClient,
-      [
-        {
-          Key: 'identityId',
-          Values: [
-            getCognitoIdentityId()
-          ]
-        },
-        {
-          Key: 'type',
-          Values: [
-            'logins'
-          ]
-        }
-      ],
-      [
-        'ssm:parameter'
-      ]
-    )
+    const path = `/sm/${getCognitoIdentityUUID()}/logins/`
+    const response = await getParametersByPathRecursive(this.ssmClient, path)
 
-    const paramterNames = getResourcesResponse.map(item => {
-      // Extract paramter name from the ARN
-      return item.ResourceARN?.substring(item.ResourceARN?.indexOf('/'))
-    }) as string[]
+    if (!response) return [] // no items found
 
-    if (paramterNames.length == 0) return [] // No resources found
-
-    const getParametersResponse = await getParameters(this.ssmClient, paramterNames)
-
-    if (!getParametersResponse.Parameters) return [] // could not fetch any parameters
-
-    // Return parameters
-    return getParametersResponse.Parameters.map(item => {
+    return response.map(item => {
       const id = item.Name?.substr(item.Name?.lastIndexOf('/') + 1) || ''
 
       return new LoginItem({

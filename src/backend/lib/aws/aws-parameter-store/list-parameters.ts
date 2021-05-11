@@ -34,7 +34,7 @@ async function getParametersByPath(
  * @param {SSM.NextToken} [nextToken] - The token to start the list. Use this token to get the next set of results
  * @return {Promise<SSM.Types.Parameter[]>}
  */
-async function getParametersByPathRecursive(
+export async function getParametersByPathRecursive(
   ssmClient: SSM,
   path: string,
   nextToken?: SSM.NextToken

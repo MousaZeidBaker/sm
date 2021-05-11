@@ -12,7 +12,7 @@ import { logger } from '../../logger/logger'
  *                                                                         parameter empty in your initial request.
  * @return {Promise<ResourceGroupsTaggingAPI.GetResourcesOutput>}
  */
- async function getResources(
+async function getResources(
   resourceGroupsTaggingAPIClient: ResourceGroupsTaggingAPI,
   tagFilters: ResourceGroupsTaggingAPI.TagFilterList,
   resourceTypeFilters: ResourceGroupsTaggingAPI.ResourceTypeFilterList,
@@ -45,7 +45,7 @@ import { logger } from '../../logger/logger'
  *                                                                         parameter empty in your initial request
  * @return {Promise<ResourceGroupsTaggingAPI.Types.ResourceTagMappingList>}
  */
-export async function getResourcesRecursive(
+async function getResourcesRecursive(
   resourceGroupsTaggingAPIClient: ResourceGroupsTaggingAPI,
   tagFilters: ResourceGroupsTaggingAPI.TagFilterList,
   resourceTypeFilters: ResourceGroupsTaggingAPI.ResourceTypeFilterList,

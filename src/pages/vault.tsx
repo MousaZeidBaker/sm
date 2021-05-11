@@ -76,9 +76,8 @@ export default function Page(): JSX.Element {
 
       setContent([])
       if (response.status === 200) {
-        const jsonResponse = await response.json()
-
-        setContent(jsonResponse.data)
+        const json = await response.json()
+        setContent(json?.data || [])
       } else {
         enqueueSnackbar("Error! Couldn't load items.", { variant: 'error' })
       }
@@ -92,22 +91,21 @@ export default function Page(): JSX.Element {
    * Handles version change event
    * 
    * @param {string} id - The id of the item
-   * @param {string} version - The version of the item
+   * @param {string} id - The version of the item
    * @return {Promise<void>}
    */
   const handleVersionChange = async (id: string, version: number): Promise<void> => {
     setLoading(true)
 
-    const response = await fetch(`/api/v1.0/logins/${id}?version=${version}`, {
+    const res = await fetch(`/api/v1.0/logins/${id}?version=${version}`, {
       headers: {
         'Authorization': session?.idToken || ''
       }
     })
+    const json = await res.json()
 
-    if (response.status === 200) {
-      const jsonResponse = await response.json()
-
-      const newItem = jsonResponse.data
+    if (json.data) {
+      const newItem = json.data
       setContent(content.map(item => {
         // Return the new item
         if (item.id === newItem.id) return newItem
@@ -115,8 +113,6 @@ export default function Page(): JSX.Element {
         // Return all other items
         return item
       }))
-    }  else {
-      enqueueSnackbar("Error! Version not found.", { variant: 'error' })
     }
 
     setLoading(false)
@@ -125,48 +121,28 @@ export default function Page(): JSX.Element {
   /**
    * Handles edit event
    * 
-   * @param {LoginItemApi} item - The item to update
+   * @param {string} id - The id of the item
    * @return {Promise<void>}
    */
-  const handleEdit = async (item: LoginItemApi): Promise<void> => {
+  const handleEdit = async (id: string): Promise<void> => {
     setLoading(true)
 
-    // API request to edit login item
-    const response = await fetch(`/api/v1.0/${item.type}/${item.id}`, {
-      method: 'PATCH',
+    const res = await fetch(`/api/v1.0/logins/${id}`, {
       headers: {
-        'Authorization': session?.idToken || '',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        'data': {
-          'type': item.type,
-          'id': item.id,
-          'attributes': {
-            title: item.attributes.title,
-            path: item.attributes.path,
-            username: item.attributes.username,
-            secret: item.attributes.secret
-          }
-        }
-      })
+        'Authorization': session?.idToken || ''
+      }
     })
+    const json = await res.json()
 
-    if (response.status === 200) {
-      const jsonResponse = await response.json()
-
-      const updatedItem = jsonResponse.data
+    if (json.data) {
+      const updatedItem = json.data
       setContent(content.map(item => {
         // Return the updated item
-        if (updatedItem.id === item.id) return updatedItem
+        if (item.id === updatedItem.id) return updatedItem
 
         // Return all other items
         return item
       }))
-      enqueueSnackbar("Success! Item updated.", { variant: 'success' })
-    } else {
-      enqueueSnackbar("Error! Couldn't update item.", { variant: 'error' })
-      return
     }
 
     setLoading(false)
@@ -196,59 +172,33 @@ export default function Page(): JSX.Element {
   /**
    * Handles add event
    * 
-   * @param {LoginItemApi} item - The item to add
-   * 
+   * @param {string} id - The id of the item
    * @return {Promise<void>}
    */
-  const handleAdd = async (item: LoginItemApi): Promise<void> => {
+  const handleAdd = async (): Promise<void> => {
     setLoading(true)
 
-    enqueueSnackbar("Adding item...", { variant: 'info' })
-
-    // API request to add new login item
-    const response = await fetch(`/api/v1.0/${item.type}`, {
-      method: 'POST',
+    const res = await fetch(`/api/v1.0/logins`, {
       headers: {
-        'Authorization': session?.idToken || '',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        'data': {
-          'type': item.type,
-          'attributes': {
-            title: item.attributes.title,
-            path: item.attributes.path,
-            username: item.attributes.username,
-            secret: item.attributes.secret
-          }
-        }
-      })
+        'Authorization': session?.idToken || ''
+      }
     })
-
-    if (response.status === 200) {
-      const jsonResponse = await response.json()
-
-      const addedItem = jsonResponse.data
-      setContent([...content, addedItem])
-      enqueueSnackbar("Success! Item added.", { variant: 'success' })
-    } else {
-      enqueueSnackbar("Error! Couldn't add item.", { variant: 'error' })
-      return
-    }
+    const json = await res.json()
+    if (json.data) setContent(json.data)
 
     setLoading(false)
   }
 
-  // DataGrid rows
-  const rows = content.map((item: LoginItemApi) => ({
-    id: item.id,
-    version: item.attributes.version,
-    lastModifiedDate: item.attributes.lastModifiedDate,
-    title: item.attributes.title,
-    path: item.attributes.path,
-    username: item.attributes.username,
-    secret: item.attributes.secret
-  }))
+    // DataGrid rows
+    const rows = content.map((item: LoginItemApi) => ({
+      id: item.id,
+      version: item.attributes.version,
+      lastModifiedDate: item.attributes.lastModifiedDate,
+      title: item.attributes.title,
+      path: item.attributes.path,
+      username: item.attributes.username,
+      secret: item.attributes.secret
+    }))
 
   // Determine longest values, used to set the column length on the data grid
   const longestTitle = Math.max(...(content.map((item: LoginItemApi) => item.attributes.title?.length)))
@@ -323,23 +273,15 @@ export default function Page(): JSX.Element {
       disableClickEventBubbling: true,
       disableColumnMenu: true,
       renderCell: (params: GridCellParams): JSX.Element => {
-        const item: LoginItemApi = {
-          id: params.getValue('id') as string,
-          type: 'logins',
-          attributes: {
-            version: params.getValue('version') as number,
-            lastModifiedDate: params.getValue('lastModifiedDate') as Date,
-            title: params.getValue('title') as string,
-            path: params.getValue('path') as string,
-            username: params.getValue('username') as string,
-            secret: params.getValue('secret') as string
-          }
-        }
-
         return (
           <OverflowMenu
-            item={item}
-            handleEdit={(item: LoginItemApi) => handleEdit(item)}
+            id={params.getValue('id') as string}
+            title={params.getValue('title') as string}
+            username={params.getValue('username') as string}
+            secret={params.getValue('secret') as string}
+            path={params.getValue('path') as string}
+            itemType={'logins'}
+            handleEdit={() => handleEdit(params.getValue('id') as string)}
             handleDelete={() => handleDelete(params.getValue('id') as string)}
           />
         )
@@ -386,7 +328,8 @@ export default function Page(): JSX.Element {
         <AddLoginItemFormDialog
           open={openAddLoginItemFormDialog}
           setOpen={setOpenAddLoginItemFormDialog}
-          handleAdd={(item: LoginItemApi) => handleAdd(item)}
+          itemType={'logins'}
+          handleAdd={handleAdd}
         />
       </>
     </Layout>

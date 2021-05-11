@@ -8,13 +8,13 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
 import CancelIcon from '@material-ui/icons/Cancel'
 import useSession from '../components/useSession'
-import { LoginItemApi } from '../backend/models/login/login-item-api'
 import { useSnackbar } from 'notistack'
 
 interface Props {
   open: boolean
   setOpen: (open: boolean) => void
-  item: LoginItemApi
+  id: string
+  itemType: string
   handleDelete: () => void
 }
 
@@ -42,7 +42,7 @@ export function DeleteItemAlertDialog(props: Props): JSX.Element {
     enqueueSnackbar("Deleting item...", { variant: 'info' })
 
     // API request to delete item
-    const response = await fetch(`/api/v1.0/${props.item.type}/${props.item.id}`, {
+    const response = await fetch(`/api/v1.0/${props.itemType}/${props.id}`, {
       method: 'DELETE',
       headers: {
         'Authorization': session?.idToken || '',

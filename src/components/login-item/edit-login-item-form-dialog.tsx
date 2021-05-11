@@ -1,17 +1,30 @@
 import React from 'react'
 import Dialog from '@material-ui/core/Dialog'
 import DialogTitle from '@material-ui/core/DialogTitle'
-import { LoginItemDialog } from './login-item-form'
-import { LoginItemApi } from '../../backend/models/login/login-item-api'
+import useSession from '../useSession'
+import { LoginItemDialog, LoginItemFormValues } from './login-item-form'
+import { useSnackbar } from 'notistack'
 
 interface Props {
   open: boolean
   setOpen: (open: boolean) => void
-  item: LoginItemApi
-  handleEdit: (item: LoginItemApi) => void
+  id: string
+  itemType: string
+  values: LoginItemFormValues
+  handleEdit: () => void
 }
 
 export function EditLoginItemFormDialog(props: Props): JSX.Element {
+  const initialFormValues: LoginItemFormValues = {
+    title: props.values.title,
+    username: props.values.username,
+    secret: props.values.secret,
+    path: props.values.path
+  }
+
+  const { session } = useSession()
+  const { enqueueSnackbar } = useSnackbar()
+
   /**
    * Handles close event
    *
@@ -24,16 +37,41 @@ export function EditLoginItemFormDialog(props: Props): JSX.Element {
   /**
    * Handles edit event
    * 
-   * @param {LoginItemApi} item - The item to update
+   * @param {LoginItemFormValues} formValues - The form values
    * 
    * @return {Promise<void>}
    */
-  const handleEdit = async (item: LoginItemApi): Promise<void> => {
-    // Close dialog immediately
+  const handleEdit = async (formValues: LoginItemFormValues): Promise<void> => {
+    // Close dialog immediately, use snackbar to inform user about the process
     props.setOpen(false)
+    enqueueSnackbar("Updating item...", { variant: 'info' })
+
+    // API request to edit login item
+    const response = await fetch(`/api/v1.0/${props.itemType}/${props.id}`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': session?.idToken || '',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        'data': {
+          'type': props.itemType,
+          'id': props.id,
+          'attributes': formValues
+        }
+      })
+    })
+
+    // Show snackbar message
+    if (response.status === 200) {
+      enqueueSnackbar("Success! Item updated.", { variant: 'success' })
+    } else {
+      enqueueSnackbar("Error! Couldn't update item.", { variant: 'error' })
+      return
+    }
 
     // Execute parent component functionality
-    props.handleEdit(item)
+    props.handleEdit()
   }
 
   return (
@@ -45,10 +83,11 @@ export function EditLoginItemFormDialog(props: Props): JSX.Element {
       >
         <DialogTitle id='form-dialog-title'>Edit item</DialogTitle>
         <LoginItemDialog
+          initialFormValues={initialFormValues}
           open={props.open}
           setOpen={props.setOpen}
-          item={props.item}
-          handleSave={(item: LoginItemApi) => handleEdit(item)}
+          itemType={props.itemType}
+          handleSave={handleEdit}
         />
       </Dialog>
     </>

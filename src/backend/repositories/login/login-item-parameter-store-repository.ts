@@ -7,23 +7,19 @@ import { createAwsServiceClients, ServiceName } from '../../lib/aws/aws-service-
 import { getCognitoIdentityUUID, getCognitoIdentityId } from '../../lib/aws/aws-cognito-federated-identity'
 import { NotFoundException } from '../../errors/exceptions'
 import SSM from 'aws-sdk/clients/ssm'
-import ResourceGroupsTaggingAPIClient from 'aws-sdk/clients/resourcegroupstaggingapi'
 import { LoginItemRepository } from './login-item-repository'
 
 export class LoginItemParameterStoreRepository implements LoginItemRepository {
   ssmClient: SSM
-  resourceGroupsTaggingAPIClient: ResourceGroupsTaggingAPIClient
 
-  constructor(ssmClient: SSM, resourceGroupsTaggingAPIClient: ResourceGroupsTaggingAPIClient) {
+  constructor(ssmClient: SSM) {
     this.ssmClient = ssmClient
-    this.resourceGroupsTaggingAPIClient = resourceGroupsTaggingAPIClient
   }
 
   public static async build(idToken: string): Promise<LoginItemParameterStoreRepository> {
-    const resourceGroupsTaggingAPIClient = await createAwsServiceClients(ServiceName.ResourceGroupsTaggingAPI, idToken)
     const ssmClient = await createAwsServiceClients(ServiceName.SSM, idToken)
 
-    return new LoginItemParameterStoreRepository(ssmClient, resourceGroupsTaggingAPIClient)
+    return new LoginItemParameterStoreRepository(ssmClient)
   }
 
   public async create(title: string, path: string, username: string, secret: string): Promise<LoginItem> {

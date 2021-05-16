@@ -1,7 +1,7 @@
 import { encrypt, decrypt } from '../../lib/encryption/encryption'
 import { Item, CreateItemArguments } from '../item'
 
-interface LoginItemDecryptedData {
+export interface LoginItemDecryptedData {
   title: string
   path: string
   username: string

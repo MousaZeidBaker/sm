@@ -348,7 +348,10 @@ export default function Page(): JSX.Element {
   ]
 
   return (
-    <Layout>
+    <Layout
+      showSearchBar={false}
+      handleSearchChange={() => {}}
+    >
       <div className={classes.root}>
         {/* A data grid */}
         <DataGrid

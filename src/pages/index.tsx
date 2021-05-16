@@ -171,7 +171,10 @@ export default function Page(): JSX.Element {
   }
 
   return (
-    <Layout>
+    <Layout
+      showSearchBar={false}
+      handleSearchChange={() => {}}
+    >
       <Typography variant='h6'>Profile</Typography>
       {/* Username text filed */}
       <TextField

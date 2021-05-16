@@ -40,7 +40,9 @@ const useStyles = makeStyles({
 })
 
 interface Props {
-  children: React.ReactNode
+  children: React.ReactNode,
+  showSearchBar: boolean
+  handleSearchChange: (pattern: string) => void
 }
 
 export function Layout (props: Props): JSX.Element {
@@ -76,6 +78,8 @@ export function Layout (props: Props): JSX.Element {
           lightTheme={lightTheme}
           // @ts-expect-error
           setLightTheme={setLightTheme}
+          showSearchBar={props.showSearchBar}
+          handleSearchChange={props.handleSearchChange}
         />
         <main className={classes.main}>
           {props.children}

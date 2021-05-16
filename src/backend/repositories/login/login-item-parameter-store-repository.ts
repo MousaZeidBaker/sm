@@ -70,7 +70,7 @@ export class LoginItemParameterStoreRepository implements LoginItemRepository {
         // not belong to the currently logged in user, even if they do not exist.
         case 'AccessDeniedException':
         case 'ParameterVersionNotFound': {
-          throw NotFoundException
+          throw new NotFoundException
         }
         default: {
           throw err
@@ -155,7 +155,7 @@ export class LoginItemParameterStoreRepository implements LoginItemRepository {
         // configured so that AccessDeniedException is thrown on any parameter
         // not belong to the currently logged in user, even if they do not exist.
         case 'AccessDeniedException': {
-          throw NotFoundException
+          throw new NotFoundException
         }
         default: {
           throw err

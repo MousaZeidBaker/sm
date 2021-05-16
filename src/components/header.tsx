@@ -72,10 +72,6 @@ const tabs = [
   {
     label: 'Vault',
     url: '/vault'
-  },
-  {
-    label: 'Vault2',
-    url: '/vault2'
   }
 ]
 

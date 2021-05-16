@@ -1,29 +1,27 @@
 import React from 'react'
 import { Layout } from '../components/layout'
-import { OverflowMenu } from '../components/overflow-menu'
-import { DataGrid, GridColDef, GridValueFormatterParams, GridCellParams, GridOverlay, GridToolbarContainer, GridToolbar } from '@material-ui/data-grid'
-import LinearProgress from '@material-ui/core/LinearProgress'
 import Fab from '@material-ui/core/Fab'
 import AddIcon from '@material-ui/icons/Add'
 import { LoginItemApi } from '../backend/models/login/login-item-api'
 import { AddLoginItemFormDialog } from '../components/login-item/add-login-item-form-dialog'
-import { Secret } from '../components/secret'
-import TextField from '@material-ui/core/TextField'
 import { makeStyles } from '@material-ui/core/styles'
 import useSession from '../components/useSession'
 import { Theme } from '@material-ui/core/styles'
+import LinearProgress from '@material-ui/core/LinearProgress'
+import Grid from '@material-ui/core/Grid'
+import LoginItemCard from '../components/login-item/login-item-card'
 import { useSnackbar } from 'notistack'
+import Fuse from 'fuse.js'
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    height: 700,
-    width: '100%',
+    flexGrow: 1
   },
   dataGrid: {
-    border: 0,
+    border: 0
   },
   fab: {
-    position: 'absolute',
+    position: 'fixed',
     bottom: theme.spacing(2),
     right: theme.spacing(2)
   },
@@ -31,11 +29,23 @@ const useStyles = makeStyles((theme: Theme) => ({
     position: 'absolute',
     top: 0,
     width: '100%'
+  },
+  expand: {
+    transform: 'rotate(0deg)',
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', {
+      duration: theme.transitions.duration.shortest
+    })
+  },
+  expandOpen: {
+    transform: 'rotate(180deg)'
   }
 }))
 
 export default function Page(): JSX.Element {
-  const [ content, setContent ] = React.useState<Array<any>>([])
+  const [ allItems, setAllItems ] = React.useState<Array<LoginItemApi>>([])
+  const [ itemsToShow, setItemsToShow ] = React.useState<Array<LoginItemApi>>([])
+  const [ lastSearchPattern, setLastSearchPattern ] = React.useState<string>('')
   const [ loading, setLoading ] = React.useState<boolean>(false)
   const [ openAddLoginItemFormDialog, setOpenAddLoginItemFormDialog ] = React.useState<boolean>(false)
 
@@ -43,25 +53,18 @@ export default function Page(): JSX.Element {
   const { session } = useSession()
   const { enqueueSnackbar } = useSnackbar()
 
-  function CustomToolbar() {
-    return (
-      <GridToolbarContainer>
-        <GridToolbar />
-      </GridToolbarContainer>
-    )
+  /**
+   * Configure Fuse. Fuse is used for fuzzy-searching
+   */
+  const options: Fuse.IFuseOptions<LoginItemApi> = {
+    includeScore: false,
+    keys: ['attributes.title']
   }
+  const fuse = new Fuse(allItems, options)
 
-  function CustomLoadingOverlay() {
-    return (
-      <GridOverlay>
-        <div className={classes.gridOverlay}>
-          <LinearProgress />
-        </div>
-      </GridOverlay>
-    )
-  }
-
-  // Fetch data
+  /**
+   * Hook that fetches all items on page reload
+   */
   React.useEffect(() => {
     const fetchData = async () => {
       if (!session) return
@@ -74,11 +77,11 @@ export default function Page(): JSX.Element {
         }
       })
 
-      setContent([])
       if (response.status === 200) {
         const jsonResponse = await response.json()
 
-        setContent(jsonResponse.data)
+        setAllItems([...jsonResponse.data])
+        setItemsToShow([...jsonResponse.data])
       } else {
         enqueueSnackbar("Error! Couldn't load items.", { variant: 'error' })
       }
@@ -89,100 +92,11 @@ export default function Page(): JSX.Element {
   }, [session])
 
   /**
-   * Handles version change event
-   * 
-   * @param {string} id - The id of the item
-   * @param {string} version - The version of the item
-   * @return {Promise<void>}
+   * Hook that updates itemsToShow list, triggered on changes to the allItems list
    */
-  const handleVersionChange = async (id: string, version: number): Promise<void> => {
-    setLoading(true)
-
-    const response = await fetch(`/api/v1.0/logins/${id}?version=${version}`, {
-      headers: {
-        'Authorization': session?.idToken || ''
-      }
-    })
-
-    if (response.status === 200) {
-      const jsonResponse = await response.json()
-
-      const newItem = jsonResponse.data
-      setContent(content.map(item => {
-        // Return the new item
-        if (item.id === newItem.id) return newItem
-
-        // Return all other items
-        return item
-      }))
-    }  else {
-      enqueueSnackbar("Error! Version not found.", { variant: 'error' })
-    }
-
-    setLoading(false)
-  }
-
-  /**
-   * Handles edit event
-   * 
-   * @param {LoginItemApi} item - The item to update
-   * @return {Promise<void>}
-   */
-  const handleEdit = async (item: LoginItemApi): Promise<void> => {
-    setLoading(true)
-
-    // API request to edit login item
-    const response = await fetch(`/api/v1.0/${item.type}/${item.id}`, {
-      method: 'PATCH',
-      headers: {
-        'Authorization': session?.idToken || '',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        'data': {
-          'type': item.type,
-          'id': item.id,
-          'attributes': {
-            title: item.attributes.title,
-            path: item.attributes.path,
-            username: item.attributes.username,
-            secret: item.attributes.secret
-          }
-        }
-      })
-    })
-
-    if (response.status === 200) {
-      const jsonResponse = await response.json()
-
-      const updatedItem = jsonResponse.data
-      setContent(content.map(item => {
-        // Return the updated item
-        if (updatedItem.id === item.id) return updatedItem
-
-        // Return all other items
-        return item
-      }))
-      enqueueSnackbar("Success! Item updated.", { variant: 'success' })
-    } else {
-      enqueueSnackbar("Error! Couldn't update item.", { variant: 'error' })
-      return
-    }
-
-    setLoading(false)
-  }
-
-  /**
-   * Handles delete event
-   * 
-   * @param {string} id - The id of the item
-   * @return {Promise<void>}
-   */
-  const handleDelete = async (id: string): Promise<void> => {
-    setLoading(true)
-    setContent(content.filter(item => item.id !== id))
-    setLoading(false)
-  }
+  React.useEffect(() => {
+    handleSearchChange(lastSearchPattern)
+  }, [allItems])
 
   /**
    * Handles Fab click event
@@ -229,150 +143,87 @@ export default function Page(): JSX.Element {
       const jsonResponse = await response.json()
 
       const addedItem = jsonResponse.data
-      setContent([...content, addedItem])
-      enqueueSnackbar("Success! Item added.", { variant: 'success' })
+      setAllItems([...allItems, addedItem])
+      enqueueSnackbar("Success! Item updated.", { variant: 'success' })
     } else {
-      enqueueSnackbar("Error! Couldn't add item.", { variant: 'error' })
+      enqueueSnackbar("Error! Couldn't update item.", { variant: 'error' })
       return
     }
 
     setLoading(false)
   }
+  
+  /**
+   * Handles delete event
+   * 
+   * @param {string} id - The id of the item
+   * @return {Promise<void>}
+   */
+  const handleDelete = async (id: string): Promise<void> => {
+    setLoading(true)
+    setAllItems(allItems.filter(item => item.id !== id))
+    setLoading(false)
+  }
 
-  // DataGrid rows
-  const rows = content.map((item: LoginItemApi) => ({
-    id: item.id,
-    version: item.attributes.version,
-    lastModifiedDate: item.attributes.lastModifiedDate,
-    title: item.attributes.title,
-    path: item.attributes.path,
-    username: item.attributes.username,
-    secret: item.attributes.secret
-  }))
+  /**
+   * Handles search change event
+   * 
+   * @param {string} pattern The search pattern to search for
+   * @return {void}
+   */
+  const handleSearchChange = (pattern: string): void => {
+    setLastSearchPattern(pattern)
 
-  // Determine longest values, used to set the column length on the data grid
-  const longestTitle = Math.max(...(content.map((item: LoginItemApi) => item.attributes.title?.length)))
-  const longestUsername = Math.max(...(content.map((item: LoginItemApi) => item.attributes.username?.length)))
-  const longestPassword = Math.max(...(content.map((item: LoginItemApi) => item.attributes.secret?.length)))
-
-  // DataGrid columns
-  const columns: GridColDef[] = [
-    {
-      field: 'id',
-      headerName: 'ID',
-      width: 220,
-      hide: true
-    },
-    {
-      field: 'title',
-      headerName: 'Title',
-      // The width is set dynamically adjusted to the longest string or to a fixed minimum
-      width: longestTitle > 12 ? longestTitle*12 : 150
-    },
-    {
-      field: 'username',
-      headerName: 'Username',
-      // The width is set dynamically adjusted to the longest string or to a fixed minimum
-      width: longestUsername > 12 ? longestUsername*12 : 150
-    },
-    {
-      field: 'secret',
-      headerName: 'Secret',
-      // The width is set dynamically adjusted to the longest string plus some fixed width for the buttons
-      width: longestPassword > 25 ? (longestPassword*12)+100 : (longestPassword*12)+200,
-      disableClickEventBubbling: true,
-      renderCell: (params: GridCellParams): JSX.Element => {
-        return (
-          <Secret
-            secret={params.getValue('secret') as string}
-          />
-        )
-      }
-    },
-    {
-      field: 'path',
-      headerName: 'Path',
-      hide: true
-    },
-    {
-      field: 'lastModifiedDate',
-      headerName: 'Last modified date',
-      width: 175,
-      valueFormatter: (params: GridValueFormatterParams) => (new Date(params.value as string)).toDateString()
-    },
-    {
-      field: 'version',
-      headerName: 'Version',
-      width: 101,
-      renderCell: (params: GridCellParams): JSX.Element => {
-        return (
-          <TextField
-            id='version'
-            type='number'
-            InputProps={{ disableUnderline: true, inputProps: { min: 1} }}
-            value={params.getValue('version')}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleVersionChange(params.getValue('id') as string, event.target.valueAsNumber)}
-          >
-          </TextField>
-        )
-      }
-    },
-    {
-      // This column contains the overflow menu
-      field: '',
-      disableClickEventBubbling: true,
-      disableColumnMenu: true,
-      renderCell: (params: GridCellParams): JSX.Element => {
-        const item: LoginItemApi = {
-          id: params.getValue('id') as string,
-          type: 'logins',
-          attributes: {
-            version: params.getValue('version') as number,
-            lastModifiedDate: params.getValue('lastModifiedDate') as Date,
-            title: params.getValue('title') as string,
-            path: params.getValue('path') as string,
-            username: params.getValue('username') as string,
-            secret: params.getValue('secret') as string
-          }
-        }
-
-        return (
-          <OverflowMenu
-            item={item}
-            handleEdit={(item: LoginItemApi) => handleEdit(item)}
-            handleDelete={() => handleDelete(params.getValue('id') as string)}
-          />
-        )
-      }
+    if(!pattern) {
+      setItemsToShow(allItems)
+      return
     }
-  ]
+
+    const matches = fuse.search(pattern)
+    if (matches.length === 0) {
+      setItemsToShow([])
+    } else {
+      setItemsToShow(matches.map(match => {
+        return match.item
+      }))
+    }
+  }
+
+  const cards = itemsToShow.map((item: LoginItemApi): JSX.Element => (
+    <LoginItemCard
+      key={item.id}
+      item={item}
+      handleDelete={handleDelete}
+    />
+  ))
 
   return (
     <Layout
-      showSearchBar={false}
-      handleSearchChange={() => {}}
+      showSearchBar={true}
+      handleSearchChange={handleSearchChange}
     >
-      <div className={classes.root}>
-        {/* A data grid */}
-        <DataGrid
-          className={classes.dataGrid}
-          rows={rows}
-          columns={columns}
-          pageSize={10}
-          disableSelectionOnClick={false}
-          components={{
-            Toolbar: CustomToolbar,
-            LoadingOverlay: CustomLoadingOverlay,
-          }}
-          loading={loading as boolean}
-          sortModel={[
-            {
-              field: 'title',
-              sort: 'asc'
-            }
-          ]}
-        />
+      {/* Progress bars */}
+      <div>
+        {loading && <>
+          <LinearProgress/>
+        </>}
       </div>
+
+      <Grid
+        className={classes.root}
+        container={true}
+        justify='flex-start'
+        spacing={2}
+      >
+        {/* Item cards */}
+        {itemsToShow.map((item: LoginItemApi): JSX.Element => (
+          <LoginItemCard
+            key={item.id}
+            item={item}
+            handleDelete={handleDelete}
+          />
+        ))}
+      </Grid>
       <div>
         {/* A floating action button */}
         <Fab
@@ -384,14 +235,14 @@ export default function Page(): JSX.Element {
           <AddIcon />
         </Fab>
       </div>
-      <>
+      <div>
         {/* An input form for adding items */}
         <AddLoginItemFormDialog
           open={openAddLoginItemFormDialog}
           setOpen={setOpenAddLoginItemFormDialog}
           handleAdd={(item: LoginItemApi) => handleAdd(item)}
         />
-      </>
+      </div>
     </Layout>
   )
 }

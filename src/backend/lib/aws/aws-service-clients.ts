@@ -4,7 +4,6 @@ import AWS from 'aws-sdk'
 const identityProvider = `cognito-idp.${process.env.NEXT_PUBLIC_APP_AWS_REGION}.amazonaws.com/${process.env.NEXT_PUBLIC_APP_USER_POOL_ID}`
 
 export enum ServiceName {
-  STS = 'sts',
   SSM = 'ssm',
   ResourceGroupsTaggingAPI = 'resourcegroupstaggingapi'
 }
@@ -35,7 +34,6 @@ export enum ServiceName {
  * 
  * @return AWS service clients
  */
-export async function createAwsServiceClients(serviceName: ServiceName.STS, idToken: string): Promise<AWS.STS>
 export async function createAwsServiceClients(serviceName: ServiceName.SSM, idToken: string): Promise<AWS.SSM>
 export async function createAwsServiceClients(serviceName: ServiceName.ResourceGroupsTaggingAPI, idToken: string): Promise<AWS.ResourceGroupsTaggingAPI>
 export async function createAwsServiceClients(serviceName: ServiceName, idToken: string): Promise<AWS.STS | AWS.SSM | AWS.ResourceGroupsTaggingAPI> {
@@ -58,11 +56,6 @@ export async function createAwsServiceClients(serviceName: ServiceName, idToken:
   }
 
   switch(serviceName) {
-    case ServiceName.STS: {
-      return new AWS.STS({
-        apiVersion: '2011-06-15'
-      })
-    }
     case ServiceName.SSM: {
       return new AWS.SSM({
         apiVersion: '2014-11-06'

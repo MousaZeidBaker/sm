@@ -2,9 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import jwt from 'jsonwebtoken'
 import jwkToPem from 'jwk-to-pem'
 import AWS from 'aws-sdk/global'
-import { createAwsServiceClients, ServiceName } from '../../lib/aws/aws-service-clients'
 import { logger } from '../../lib/logger/logger'
-import { getCallerIdentity } from '../../lib/aws/aws-caller-identity/get-caller-identity'
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
@@ -166,16 +164,6 @@ export async function authMiddleware(req: NextApiRequest, res: NextApiResponse):
   const tokenVerified = await verifyToken(req.headers.authorization || '')
   if (!tokenVerified) {
     logger.info('Token authentication failed')
-    res.status(401).json(unauthorizedError)
-    return
-  }
-
-  // Test token by requesting AWS caller identity
-  try {
-    const stsClient = await createAwsServiceClients(ServiceName.STS, req.headers.authorization || '')
-    await getCallerIdentity(stsClient)
-  } catch (err) {
-    logger.info('Failed to request AWS caller identity', { err })
     res.status(401).json(unauthorizedError)
     return
   }

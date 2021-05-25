@@ -12,14 +12,9 @@ export const logger = winston.createLogger({
         winston.format.align(),
         winston.format.metadata({ fillExcept: ['message', 'level', 'timestamp', 'label'] }),
         winston.format.printf(info => {
-          // If message is of type object, JSON stringify it
-          let message = info.message
-          if (typeof info.message === 'object') {
-            message = JSON.stringify(info.message, null, 4)
-          }
-
-          let metadata = ''
-          if (Object.keys(info.metadata).length > 0) metadata = JSON.stringify(Object.values(info.metadata), null, 4)
+          // If of type object, go through the complete object in order to avoid prints like '[Object]'
+          const message = typeof info.message === 'object' ? util.inspect(info.message, { depth: null }) : info.message
+          const metadata = typeof info.metadata === 'object' ? util.inspect(info.metadata, { depth: null }) : info.metadata
 
           return `${info.timestamp} ${info.level}: ${message} ${metadata}`
         })
@@ -32,5 +27,3 @@ export const logger = winston.createLogger({
   ],
   exitOnError: false, // Do not exit on handled exceptions
 })
-
-// export const logger = getLogger('debug')

@@ -131,7 +131,7 @@ afterEach(() => {
 describe('login item ParameterStore repository', () => {
   const [ repo ] = setupMocks()
 
-  test('should create item', async () => {
+  it('should create item', async () => {
     const parameterValue = parameterValues[0]
 
     const response = await repo.create(
@@ -172,7 +172,7 @@ describe('login item ParameterStore repository', () => {
     }
     expect(putParameterPromise).toHaveBeenCalledWith(params)
   })
-  test('should get item', async () => {
+  it('should get item', async () => {
     const parameter = parameters[0]
     const parameterValue = parameterValues[0]
     const id = getIdFromParameter(parameter)
@@ -196,27 +196,7 @@ describe('login item ParameterStore repository', () => {
     }
     expect(getParameterPromise).toHaveBeenCalledWith(params)
   })
-  test('should throw NotFoundException on get non-existent item', async () => {
-    const [ repo ] = setupMocks({ getParameter: jest.fn().mockReturnValue({
-      promise: jest.fn().mockImplementation(() => {
-        throw new ParameterNotFound
-      })
-    })})
-
-    await expect(() => repo.get('nonExistentId'))
-      .rejects.toThrow(NotFoundException)
-  })
-  test('should throw NotFoundException on get non-existent item version', async () => {
-    const [ repo ] = setupMocks({ getParameter: jest.fn().mockReturnValue({
-      promise: jest.fn().mockImplementation(() => {
-        throw new ParameterVersionNotFound
-      })
-    })})
-
-    await expect(() => repo.get('nonExistentId'))
-      .rejects.toThrow(NotFoundException)
-  })
-  test('should get item with specific version', async () => {
+  it('should get item with specific version', async () => {
     const parameter = parameters[0]
     const parameterValue = parameterValues[0]
     const id = getIdFromParameter(parameter)
@@ -241,7 +221,27 @@ describe('login item ParameterStore repository', () => {
     }
     expect(getParameterPromise).toHaveBeenCalledWith(params)
   })
-  test('should list items', async () => {
+  it('should throw NotFoundException on get non-existent item', async () => {
+    const [ repo ] = setupMocks({ getParameter: jest.fn().mockReturnValue({
+      promise: jest.fn().mockImplementation(() => {
+        throw new ParameterNotFound
+      })
+    })})
+
+    await expect(() => repo.get('nonExistentId'))
+      .rejects.toThrow(NotFoundException)
+  })
+  it('should throw NotFoundException on get non-existent item version', async () => {
+    const [ repo ] = setupMocks({ getParameter: jest.fn().mockReturnValue({
+      promise: jest.fn().mockImplementation(() => {
+        throw new ParameterVersionNotFound
+      })
+    })})
+
+    await expect(() => repo.get('nonExistentId'))
+      .rejects.toThrow(NotFoundException)
+  })
+  it('should list items', async () => {
     const response = await repo.list()
 
     // Validate response
@@ -267,7 +267,7 @@ describe('login item ParameterStore repository', () => {
     }
     expect(getParametersByPathPromise).toHaveBeenCalledWith(params)
   })
-  test('should update item', async () => {
+  it('should update item', async () => {
     const parameter = parameters[0]
     const id = getIdFromParameter(parameter)
 
@@ -308,7 +308,7 @@ describe('login item ParameterStore repository', () => {
     }
     expect(putParameterPromise).toHaveBeenCalledWith(params)
   })
-  test('should not update item when providing same values', async () => {
+  it('should not update item when providing same values', async () => {
     const parameterValue = parameterValues[0]
     const parameter = parameters[0]
     const id = getIdFromParameter(parameter)
@@ -334,7 +334,7 @@ describe('login item ParameterStore repository', () => {
     // Put operation should not be called when providing same values
     expect(putParameterPromise).not.toHaveBeenCalled()
   })
-  test('should throw NotFoundException on update non-existent item', async () => {
+  it('should throw NotFoundException on update non-existent item', async () => {
     const [ repo ] = setupMocks({ putParameter: jest.fn().mockReturnValue({
       promise: jest.fn().mockImplementation(() => {
         throw new ParameterNotFound
@@ -344,7 +344,7 @@ describe('login item ParameterStore repository', () => {
     await expect(() => repo.update('nonExistentId', 'newTitle'))
       .rejects.toThrow(NotFoundException)
   })
-  test('should delete item', async () => {
+  it('should delete item', async () => {
     const parameter = parameters[0]
     const id = getIdFromParameter(parameter)
     await repo.delete(id)
@@ -355,7 +355,7 @@ describe('login item ParameterStore repository', () => {
     }
     expect(deleteParameterPromise).toHaveBeenCalledWith(params)
   })
-  test('should throw NotFoundException on delete non-existent item', async () => {
+  it('should throw NotFoundException on delete non-existent item', async () => {
     const [ repo ] = setupMocks({ deleteParameter: jest.fn().mockReturnValue({
       promise: jest.fn().mockImplementation(() => {
         throw new ParameterNotFound

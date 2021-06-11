@@ -35,7 +35,7 @@ export function LoginItemDialog(props: Props): JSX.Element {
   const [formValues, setFormValues] = React.useState<LoginItemFormValues>(props.item.attributes)
   const [titleTextFieldError, setTitleTextFieldError] = React.useState<boolean>(false)
   const [usernameTextFieldError, setUsernameTextFieldError] = React.useState<boolean>(false)
-  const [passwordTextFieldError, setPasswordTextFieldError] = React.useState<boolean>(false)
+  const [secretTextFieldError, setSecretTextFieldError] = React.useState<boolean>(false)
   const [noteTextFieldError, setNoteTextFieldError] = React.useState<boolean>(false)
   const [disableSaveButton, setDisableSaveButton] = React.useState<boolean>(false)
 
@@ -47,7 +47,7 @@ export function LoginItemDialog(props: Props): JSX.Element {
       let disable = false
 
       // Disable button if one of the fields are wrong
-      if (titleTextFieldError || usernameTextFieldError || passwordTextFieldError || noteTextFieldError) disable = true
+      if (titleTextFieldError || usernameTextFieldError || secretTextFieldError || noteTextFieldError) disable = true
       
       // Disable button if one of the fields are empty
       Object.values(formValues).forEach(value => {
@@ -72,7 +72,7 @@ export function LoginItemDialog(props: Props): JSX.Element {
     // Restore text field error indicator
     setTitleTextFieldError(false)
     setUsernameTextFieldError(false)
-    setPasswordTextFieldError(false)
+    setSecretTextFieldError(false)
     setNoteTextFieldError(false)
   }
 
@@ -105,9 +105,9 @@ export function LoginItemDialog(props: Props): JSX.Element {
       }
       case 'secret': {
         if (value?.match(pattern)) {
-          setPasswordTextFieldError(false)
+          setSecretTextFieldError(false)
         } else {
-          setPasswordTextFieldError(true)
+          setSecretTextFieldError(true)
         }
         return
       }
@@ -201,7 +201,7 @@ export function LoginItemDialog(props: Props): JSX.Element {
           id='secret'
           label='Secret'
           type='text'
-          error={passwordTextFieldError}
+          error={secretTextFieldError}
           value={formValues.secret}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChange('secret', event.target.value)}
         />

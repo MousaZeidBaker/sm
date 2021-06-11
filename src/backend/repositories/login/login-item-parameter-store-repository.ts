@@ -22,12 +22,13 @@ export class LoginItemParameterStoreRepository implements LoginItemRepository {
     return new LoginItemParameterStoreRepository(ssmClient)
   }
 
-  public async create(title: string, path: string, username: string, secret: string): Promise<LoginItem> {
+  public async create(title: string, path: string, username: string, secret: string, note: string): Promise<LoginItem> {
     const encryptedData = LoginItem.encryptData({
       title: title,
       path: path,
       username: username,
-      secret: secret
+      secret: secret,
+      note: note
     })
 
     const newItem = new LoginItem({
@@ -104,14 +105,15 @@ export class LoginItemParameterStoreRepository implements LoginItemRepository {
     })
   }
 
-  public async update(id: string, title?: string, path?: string, username?: string, secret?: string): Promise<LoginItem> {
+  public async update(id: string, title?: string, path?: string, username?: string, secret?: string, note?: string): Promise<LoginItem> {
     const oldItem = await this.get(id)
 
     const encryptedData = LoginItem.encryptData({
       title: title || '',
       path: path || '',
       username: username || '',
-      secret: secret || ''
+      secret: secret || '',
+      note: note || ''
     })
 
     const updatedItem = new LoginItem({

@@ -21,6 +21,7 @@ export interface LoginItemFormValues {
   path: string
   username: string
   secret: string
+  note: string
 }
 
 interface Props {
@@ -35,6 +36,7 @@ export function LoginItemDialog(props: Props): JSX.Element {
   const [titleTextFieldError, setTitleTextFieldError] = React.useState<boolean>(false)
   const [usernameTextFieldError, setUsernameTextFieldError] = React.useState<boolean>(false)
   const [passwordTextFieldError, setPasswordTextFieldError] = React.useState<boolean>(false)
+  const [noteTextFieldError, setNoteTextFieldError] = React.useState<boolean>(false)
   const [disableSaveButton, setDisableSaveButton] = React.useState<boolean>(false)
 
   const classes = useStyles()
@@ -45,7 +47,7 @@ export function LoginItemDialog(props: Props): JSX.Element {
       let disable = false
 
       // Disable button if one of the fields are wrong
-      if (titleTextFieldError || usernameTextFieldError || passwordTextFieldError) disable = true
+      if (titleTextFieldError || usernameTextFieldError || passwordTextFieldError || noteTextFieldError) disable = true
       
       // Disable button if one of the fields are empty
       Object.values(formValues).forEach(value => {
@@ -71,6 +73,7 @@ export function LoginItemDialog(props: Props): JSX.Element {
     setTitleTextFieldError(false)
     setUsernameTextFieldError(false)
     setPasswordTextFieldError(false)
+    setNoteTextFieldError(false)
   }
 
   /**
@@ -105,6 +108,14 @@ export function LoginItemDialog(props: Props): JSX.Element {
           setPasswordTextFieldError(false)
         } else {
           setPasswordTextFieldError(true)
+        }
+        return
+      }
+      case 'note': {
+        if (value.length < 50) {
+          setNoteTextFieldError(false)
+        } else {
+          setNoteTextFieldError(true)
         }
         return
       }
@@ -146,7 +157,8 @@ export function LoginItemDialog(props: Props): JSX.Element {
         title: formValues.title,
         path: formValues.path,
         username: formValues.username,
-        secret: formValues.secret
+        secret: formValues.secret,
+        note: formValues.note
       }
     }
     // Execute parent component functionality
@@ -192,6 +204,20 @@ export function LoginItemDialog(props: Props): JSX.Element {
           error={passwordTextFieldError}
           value={formValues.secret}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChange('secret', event.target.value)}
+        />
+        {/* Note text filed */}
+        <TextField
+          fullWidth
+          variant='outlined'
+          margin='dense'
+          id='note'
+          label='Note'
+          type='text'
+          multiline={true}
+          rows={4}
+          error={noteTextFieldError}
+          value={formValues.note}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChange('note', event.target.value)}
         />
         {/* Copy button */}
         <Button

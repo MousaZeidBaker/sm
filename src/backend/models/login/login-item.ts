@@ -6,6 +6,7 @@ export interface LoginItemDecryptedData {
   path: string
   username: string
   secret: string
+  note: string
 }
 
 export class LoginItem extends Item {

@@ -14,13 +14,15 @@ const parameterValues: LoginItemDecryptedData[] = [
     title: 'myTitle',
     path: 'myPath',
     username: 'myUsername',
-    secret: 'mySecret'
+    secret: 'mySecret',
+    note: 'myNote'
   },
   {
     title: 'myTitle2',
     path: 'myPath2',
     username: 'myUsername2',
-    secret: 'mySecret2'
+    secret: 'mySecret2',
+    note: 'myNote2'
   }
 ]
 
@@ -138,7 +140,8 @@ describe('login item ParameterStore repository', () => {
       parameterValue.title,
       parameterValue.path,
       parameterValue.username,
-      parameterValue.secret
+      parameterValue.secret,
+      parameterValue.note
     )
 
     // Validate response
@@ -275,7 +278,8 @@ describe('login item ParameterStore repository', () => {
       title: 'newTitle',
       path: 'newPath',
       username: 'newUsername',
-      secret: 'newSecret'
+      secret: 'newSecret',
+      note: 'newNote'
     }
 
     const response = await repo.update(
@@ -283,7 +287,8 @@ describe('login item ParameterStore repository', () => {
       newParameterValue.title,
       newParameterValue.path,
       newParameterValue.username,
-      newParameterValue.secret
+      newParameterValue.secret,
+      newParameterValue.note
     )
 
     // Validate response
@@ -318,7 +323,8 @@ describe('login item ParameterStore repository', () => {
       parameterValue.title,
       parameterValue.path,
       parameterValue.username,
-      parameterValue.secret
+      parameterValue.secret,
+      parameterValue.note
     )
 
     // Validate response

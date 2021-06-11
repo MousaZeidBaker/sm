@@ -11,5 +11,6 @@
     path: string
     username: string
     secret: string
+    note: string
   }
 }

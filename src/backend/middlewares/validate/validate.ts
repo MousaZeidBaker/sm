@@ -29,6 +29,9 @@ const loginItemAttributesSchema = Joi.object(
       .max(50)
       // Matches one depth, the following pattern matches two depths '/^(\/[a-zA-Z0-9]*)(\/[a-zA-Z0-9]+){0,1}/'
       .pattern(/^(\/[a-zA-Z0-9]*)/)
+      .required(),
+    note: Joi.string()
+      .max(50)
       .required()
   }
 )

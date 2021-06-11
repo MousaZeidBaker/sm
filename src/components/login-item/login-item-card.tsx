@@ -1,6 +1,7 @@
 import React from 'react'
 import { OverflowMenu } from '../../components/overflow-menu'
 import { LoginItemApi } from '../../backend/models/login/login-item-api'
+import { LoginItemDecryptedData } from '../../backend/models/login/login-item'
 import { makeStyles } from '@material-ui/core/styles'
 import useSession from '../../components/useSession'
 import { Theme } from '@material-ui/core/styles'
@@ -74,6 +75,13 @@ export default function LoginItemCard(props: Props): JSX.Element {
     enqueueSnackbar("Updating item...", { variant: 'info' })
 
     // API request to edit login item
+    const attributes: LoginItemDecryptedData = {
+      title: item.attributes.title,
+      path: item.attributes.path,
+      username: item.attributes.username,
+      secret: item.attributes.secret,
+      note: item.attributes.note
+    }
     const response = await fetch(`/api/v1.0/${item.type}/${item.id}`, {
       method: 'PATCH',
       headers: {
@@ -84,12 +92,7 @@ export default function LoginItemCard(props: Props): JSX.Element {
         'data': {
           'type': item.type,
           'id': item.id,
-          'attributes': {
-            title: item.attributes.title,
-            path: item.attributes.path,
-            username: item.attributes.username,
-            secret: item.attributes.secret
-          }
+          'attributes': attributes
         }
       })
     })
@@ -163,9 +166,7 @@ export default function LoginItemCard(props: Props): JSX.Element {
           subheader={new Date(item.attributes.lastModifiedDate).toDateString()}
         />
         <CardContent>
-          <Typography variant='body2' color='textSecondary'>
-            Some description goes here
-          </Typography>
+          <Typography variant='body2' color='textSecondary'>{item.attributes.note}</Typography>
         </CardContent>
         <CardActions disableSpacing>
           {/* Render expand button and handle card expansion */}

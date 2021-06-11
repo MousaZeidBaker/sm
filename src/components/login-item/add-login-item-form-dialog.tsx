@@ -21,7 +21,8 @@ export function AddLoginItemFormDialog(props: Props): JSX.Element {
       title: '',
       path: '/',
       username: '',
-      secret: ''
+      secret: '',
+      note: ''
     }
   }
 

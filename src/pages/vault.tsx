@@ -3,6 +3,7 @@ import { Layout } from '../components/layout'
 import Fab from '@material-ui/core/Fab'
 import AddIcon from '@material-ui/icons/Add'
 import { LoginItemApi } from '../backend/models/login/login-item-api'
+import { LoginItemDecryptedData } from '../backend/models/login/login-item'
 import { AddLoginItemFormDialog } from '../components/login-item/add-login-item-form-dialog'
 import { makeStyles } from '@material-ui/core/styles'
 import useSession from '../components/useSession'
@@ -120,6 +121,13 @@ export default function Page(): JSX.Element {
     enqueueSnackbar("Adding item...", { variant: 'info' })
 
     // API request to add new login item
+    const attributes: LoginItemDecryptedData = {
+      title: item.attributes.title,
+      path: item.attributes.path,
+      username: item.attributes.username,
+      secret: item.attributes.secret,
+      note: item.attributes.note
+    }
     const response = await fetch(`/api/v1.0/${item.type}`, {
       method: 'POST',
       headers: {
@@ -127,15 +135,7 @@ export default function Page(): JSX.Element {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        'data': {
-          'type': item.type,
-          'attributes': {
-            title: item.attributes.title,
-            path: item.attributes.path,
-            username: item.attributes.username,
-            secret: item.attributes.secret
-          }
-        }
+        'data': attributes
       })
     })
 

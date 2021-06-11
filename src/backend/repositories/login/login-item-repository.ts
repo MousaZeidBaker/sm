@@ -14,7 +14,7 @@ export declare class LoginItemRepository {
    * @param {string} secret
    * @return {Promise<LoginItem>}
    */
-  create(title?: string, path?: string, username?: string, secret?: string): Promise<LoginItem>
+  create(title?: string, path?: string, username?: string, secret?: string, note?: string): Promise<LoginItem>
 
   /**
    * Get item
@@ -42,7 +42,7 @@ export declare class LoginItemRepository {
    * @param {string} secret
    * @return {Promise<LoginItem>}
    */
-  update(id: string, title?: string, path?: string, username?: string, secret?: string): Promise<LoginItem>
+  update(id: string, title?: string, path?: string, username?: string, secret?: string, note?: string): Promise<LoginItem>
 
   /**
    * Delete item

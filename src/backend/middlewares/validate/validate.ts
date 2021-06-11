@@ -14,6 +14,12 @@ const loginItemAttributesSchema = Joi.object(
       .max(50)
       .pattern(stringPattern)
       .required(),
+    path: Joi.string()
+      .min(1)
+      .max(50)
+      // Matches one depth, the following pattern matches two depths '/^(\/[a-zA-Z0-9]*)(\/[a-zA-Z0-9]+){0,1}/'
+      .pattern(/^(\/[a-zA-Z0-9]*)/)
+      .required(),
     username: Joi.string()
       .min(1)
       .max(50)
@@ -23,12 +29,6 @@ const loginItemAttributesSchema = Joi.object(
       .min(1)
       .max(50)
       .pattern(stringPattern)
-      .required(),
-    path: Joi.string()
-      .min(1)
-      .max(50)
-      // Matches one depth, the following pattern matches two depths '/^(\/[a-zA-Z0-9]*)(\/[a-zA-Z0-9]+){0,1}/'
-      .pattern(/^(\/[a-zA-Z0-9]*)/)
       .required(),
     note: Joi.string()
       .max(50)

@@ -1,5 +1,6 @@
 Contributor License Agreement V1.0
-based on http://harmonyagreements.org/docs/ha-combined-v1.html
+
+Based on http://harmonyagreements.org/docs/ha-combined-v1.html
 
 Thank you for your interest in contributing to SM ("We" or "Us").
 

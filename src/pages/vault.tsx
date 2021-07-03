@@ -135,7 +135,10 @@ export default function Page(): JSX.Element {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        'data': attributes
+        'data': {
+          'type': item.type,
+          'attributes': attributes
+        }
       })
     })
 
@@ -144,10 +147,9 @@ export default function Page(): JSX.Element {
 
       const addedItem = jsonResponse.data
       setAllItems([...allItems, addedItem])
-      enqueueSnackbar("Success! Item updated.", { variant: 'success' })
+      enqueueSnackbar("Success! Item added.", { variant: 'success' })
     } else {
-      enqueueSnackbar("Error! Couldn't update item.", { variant: 'error' })
-      return
+      enqueueSnackbar("Error! Couldn't add item.", { variant: 'error' })
     }
 
     setLoading(false)

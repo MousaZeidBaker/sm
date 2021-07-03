@@ -31,6 +31,7 @@ const loginItemAttributesSchema = Joi.object(
       .pattern(stringPattern)
       .required(),
     note: Joi.string()
+      .min(1)
       .max(50)
       .required()
   }

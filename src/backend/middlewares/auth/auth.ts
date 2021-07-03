@@ -169,5 +169,5 @@ export async function authMiddleware(req: NextApiRequest, res: NextApiResponse):
   }
 
   const credentials = AWS.config.credentials as AWS.CognitoIdentityCredentials
-  logger.info('IdentityId:', [ credentials.identityId ])
+  logger.info('IdentityId:', [ credentials?.identityId ])
 }

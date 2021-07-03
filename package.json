@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "jest"
+    "test": "jest",
+    "vercel": "vercel"
   },
   "dependencies": {
     "@aws-amplify/ui-react": "^1.0.2",

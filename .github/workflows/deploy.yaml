@@ -1,0 +1,59 @@
+# This workflow deploys our app
+
+name: Deploy
+
+# Controls when the action will run
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy_dev:
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 15.x
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Test
+        run: yarn test
+
+      - name: Deploy dev
+        run: yarn run vercel --prod --token ${{secrets.VERCEL_TOKEN}}
+        env:
+          VERCEL_ORG_ID: ${{secrets.VERCEL_ORG_ID}}
+          VERCEL_PROJECT_ID: ${{secrets.VERCEL_PROJECT_ID}}
+
+  deploy_prod:
+    needs: deploy_dev
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 15.x
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Test
+        run: yarn test
+
+      - name: Deploy prod
+        run: yarn run vercel --prod --token ${{secrets.VERCEL_TOKEN}}
+        env:
+          VERCEL_ORG_ID: ${{secrets.VERCEL_ORG_ID}}
+          VERCEL_PROJECT_ID: ${{secrets.VERCEL_PROJECT_ID}}

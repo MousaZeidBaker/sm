@@ -29,6 +29,8 @@ In order to avoid latency, it's recommended to deploy the resources to `us-east-
 AWS_DEFAULT_REGION=us-east-1 AWS_ACCESS_KEY_ID=my-access-key AWS_SECRET_ACCESS_KEY=my-secret-access-key ./infrastructure/infrastructure.sh
 ```
 
+The resources should now be created. By default users can not sign themselves up from your app, but you can create users from the AWS Management Console. This behavior can of course be changed after your preferences, learn more about creating users and how to change this setting [here](https://docs.aws.amazon.com/cognito/latest/developerguide/how-to-create-user-accounts.html).
+
 ### Run web app locally before deploying (optional)
 
 Run the web app locally to try it out and to make sure everything is set up correctly.

@@ -23,14 +23,15 @@ echo "$RANDOM_ID"
 
 # Create tmp folder
 SOURCE="${BASH_SOURCE%/*}"
-mkdir -p "${SOURCE}/tmp"
+OUTPUT_DIR="$SOURCE/output/$RANDOM_ID"
+mkdir -p "$OUTPUT_DIR"
 
 # Create user-pool
 # https://awscli.amazonaws.com/v2/documentation/api/latest/reference/cognito-idp/create-user-pool.html
 echo "Creating user-pool"
 aws cognito-idp create-user-pool \
   --pool-name "sm_user_pool_$RANDOM_ID" \
-  --policies "PasswordPolicy={MinimumLength=8,RequireUppercase=false,RequireLowercase=false,RequireNumbers=false,RequireSymbols=false}" \
+  --policies "PasswordPolicy={MinimumLength=8,RequireUppercase=true,RequireLowercase=true,RequireNumbers=true,RequireSymbols=false}" \
   --auto-verified-attributes "email" \
   --alias-attributes "email" "preferred_username" \
   --admin-create-user-config "AllowAdminCreateUserOnly=True" \
@@ -38,9 +39,9 @@ aws cognito-idp create-user-pool \
   --username-configuration "CaseSensitive=False" \
   --account-recovery-setting "RecoveryMechanisms=[{Priority=1,Name=verified_email}]" \
   --user-pool-tags "id=$RANDOM_ID" \
-  > "${SOURCE}/tmp/response.txt"
+  > "$OUTPUT_DIR/response.txt"
 
-USER_POOL_ID=$(cat "${SOURCE}/tmp/response.txt" | jq -r ".[].Id")
+USER_POOL_ID=$(cat "$OUTPUT_DIR/response.txt" | jq -r ".[].Id")
 
 # Configuration user pool multi-factor authentication (MFA)
 # https://awscli.amazonaws.com/v2/documentation/api/latest/reference/cognito-idp/set-user-pool-mfa-config.html
@@ -49,7 +50,7 @@ aws cognito-idp set-user-pool-mfa-config \
   --user-pool-id "$USER_POOL_ID" \
   --software-token-mfa-configuration "Enabled=True" \
   --mfa-configuration "ON" \
-  > "${SOURCE}/tmp/response.txt"
+  > "$OUTPUT_DIR/response.txt"
 
 # Create user-pool client
 # https://awscli.amazonaws.com/v2/documentation/api/latest/reference/cognito-idp/create-user-pool-client.html
@@ -63,9 +64,9 @@ aws cognito-idp create-user-pool-client \
   --id-token-validity 60 \
   --token-validity-units "AccessToken=minutes,IdToken=minutes,RefreshToken=minutes" \
   --prevent-user-existence-errors "ENABLED" \
-  > "${SOURCE}/tmp/response.txt"
+  > "$OUTPUT_DIR/response.txt"
 
-USER_POOL_WEB_CLIENT_ID=$(cat "${SOURCE}/tmp/response.txt" | jq -r ".UserPoolClient.ClientId")
+USER_POOL_WEB_CLIENT_ID=$(cat "$OUTPUT_DIR/response.txt" | jq -r ".UserPoolClient.ClientId")
 
 # Create identity-pool
 # https://awscli.amazonaws.com/v2/documentation/api/latest/reference/cognito-identity/create-identity-pool.html
@@ -75,39 +76,39 @@ aws cognito-identity create-identity-pool \
   --no-allow-unauthenticated-identities \
   --cognito-identity-providers "ProviderName=\"cognito-idp.eu-central-1.amazonaws.com/$USER_POOL_ID\",ClientId=\"$USER_POOL_WEB_CLIENT_ID\",ServerSideTokenCheck=false" \
   --identity-pool-tags "id=$RANDOM_ID" \
-  > "${SOURCE}/tmp/response.txt"
+  > "$OUTPUT_DIR/response.txt"
 
-IDENTITY_POOL_ID=$(cat "${SOURCE}/tmp/response.txt" | jq -r ".IdentityPoolId")
+IDENTITY_POOL_ID=$(cat "$OUTPUT_DIR/response.txt" | jq -r ".IdentityPoolId")
 
-# Configuere trust-policy.json file with the identity-pool id
-echo "Updating trust-policy.json"
-cat "${SOURCE}/trust-policy.json" | jq -r \
+# Configuere trust-policy-template.json file with the identity-pool id
+echo "Preparing trust-policy.json"
+cat "$SOURCE/trust-policy-template.json" | jq -r \
   '.Statement[].Condition.StringEquals."cognito-identity.amazonaws.com:aud"=$identityPoolId' \
   --arg identityPoolId "$IDENTITY_POOL_ID" \
-  > "${SOURCE}/tmp/trust-policy.json"
+  > "$OUTPUT_DIR/trust-policy.json"
 
-# Configuere policy.json file with the identity-pool id
-echo "Updating policy.json"
-cat "${SOURCE}/policy.json" | \
+# Configuere policy-template.json file with the identity-pool id
+echo "Preparing policy.json"
+cat "$SOURCE/policy-template.json" | \
   # Configure condition
   jq -r   '.Statement[].Condition.StringEquals."cognito-identity.amazonaws.com:aud"=$identityPoolId' \
   --arg identityPoolId "$IDENTITY_POOL_ID" | \
   # Configure resource
   jq -r   '.Statement[].Resource=$resource' \
   --arg resource "arn:aws:ssm:$AWS_DEFAULT_REGION:*:parameter/sm/*" \
-  > "${SOURCE}/tmp/policy.json"
+  > "$OUTPUT_DIR/policy.json"
 
 # Create IAM role
 # https://awscli.amazonaws.com/v2/documentation/api/latest/reference/iam/create-role.html
 echo "Creating IAM role"
 aws iam create-role \
   --role-name "sm_auth_role_$RANDOM_ID" \
-  --assume-role-policy-document "file://${SOURCE}/tmp/trust-policy.json" \
+  --assume-role-policy-document "file://$OUTPUT_DIR/trust-policy.json" \
   --tags "Key=id,Value=$RANDOM_ID" \
-  > "${SOURCE}/tmp/response.txt"
+  > "$OUTPUT_DIR/response.txt"
 
-ROLE_ARN=$(cat "${SOURCE}/tmp/response.txt" | jq -r ".Role.Arn")
-ROLE_NAME=$(cat "${SOURCE}/tmp/response.txt" | jq -r ".Role.RoleName")
+ROLE_ARN=$(cat "$OUTPUT_DIR/response.txt" | jq -r ".Role.Arn")
+ROLE_NAME=$(cat "$OUTPUT_DIR/response.txt" | jq -r ".Role.RoleName")
 
 # Add an inline policy document to the IAM role
 # https://awscli.amazonaws.com/v2/documentation/api/latest/reference/iam/put-role-policy.html
@@ -115,8 +116,8 @@ echo "Adding policy document to the IAM role"
 aws iam put-role-policy \
   --role-name "$ROLE_NAME" \
   --policy-name "sm_auth_role_policy_$RANDOM_ID" \
-  --policy-document "file://${SOURCE}/tmp/policy.json" \
-  > "${SOURCE}/tmp/response.txt"
+  --policy-document "file://$OUTPUT_DIR/policy.json" \
+  > "$OUTPUT_DIR/response.txt"
 
 # Set the roles for the identity pool
 # https://awscli.amazonaws.com/v2/documentation/api/latest/reference/cognito-identity/set-identity-pool-roles.html
@@ -124,7 +125,13 @@ echo "Setting IAM role for the identity-pool"
 aws cognito-identity set-identity-pool-roles \
   --identity-pool-id "$IDENTITY_POOL_ID" \
   --roles authenticated="$ROLE_ARN" \
-  > "${SOURCE}/tmp/response.txt"
+  > "$OUTPUT_DIR/response.txt"
 
-# Print neccessary variables
-echo "{\"USER_POOL_ID\":\"$USER_POOL_ID\", \"USER_POOL_WEB_CLIENT_ID\":\"$USER_POOL_WEB_CLIENT_ID\", \"IDENTITY_POOL_ID\":\"$IDENTITY_POOL_ID\"}" | jq -r "."
+# Prepare output
+OUTPUT_STR="{\"USER_POOL_ID\":\"$USER_POOL_ID\", \"USER_POOL_WEB_CLIENT_ID\":\"$USER_POOL_WEB_CLIENT_ID\", \"IDENTITY_POOL_ID\":\"$IDENTITY_POOL_ID\"}"
+OUTPUT_JSON=$( jq "."  <<< "$OUTPUT_STR" )
+
+# Write output to file and print to stdout
+echo "Writing output to $OUTPUT_DIR/output.json"
+echo "$OUTPUT_JSON" > "$OUTPUT_DIR/output.json"
+echo "$OUTPUT_JSON" | jq '.'

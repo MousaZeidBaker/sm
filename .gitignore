@@ -35,4 +35,4 @@ yarn-error.log*
 
 jwks.json
 
-tmp
+infrastructure/output

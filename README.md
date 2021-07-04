@@ -16,8 +16,8 @@ SM is an open-source self-hosted secrets manager with zero cost. The idea with S
 
 The `infrastructure.sh` script deploys the necessary AWS resources. The following resources will be deployed:
 
-* `Cognito user-pool`
-* `Cognito identity-pool`
+* `Cognito User Pool`
+* `Cognito Identity Pool`
 * `IAM role`
 * `IAM policy`
 
@@ -29,7 +29,18 @@ In order to avoid latency, it's recommended to deploy the resources to `us-east-
 AWS_DEFAULT_REGION=us-east-1 AWS_ACCESS_KEY_ID=my-access-key AWS_SECRET_ACCESS_KEY=my-secret-access-key ./infrastructure/infrastructure.sh
 ```
 
-The resources should now be created. By default users can not sign themselves up from your app, but you can create users from the AWS Management Console. This behavior can of course be changed after your preferences, learn more about creating users and how to change this setting [here](https://docs.aws.amazon.com/cognito/latest/developerguide/how-to-create-user-accounts.html).
+The resources should now be created. By default users can not sign themselves up from your app, but you can create users from the AWS Management Console. This behavior can of course be changed to match your preferences, learn more about creating users and how to change this setting [here](https://docs.aws.amazon.com/cognito/latest/developerguide/how-to-create-user-accounts.html).
+
+The last step in this section is to unlock the authentication provider, `Cognito User Pool`, in the `Cognito Identity Pool` console. See the following procedure to do so
+
+1. Head over to the `Cognito Identity Pool` console and select the identity pool.
+2. In the top-right corner of the __Dashboard__ page, choose __Edit identity pool__. The __Edit identity pool__ page appears.
+3. Scroll down and choose __Authentication providers__ to expand it.
+4. Choose the __Cognito__ tab.
+5. Choose __Unlock__.
+6. Choose __Save Changes__.
+
+
 
 ### Run web app locally before deploying (optional)
 

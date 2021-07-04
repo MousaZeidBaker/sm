@@ -90,3 +90,30 @@ Deploy
 ```shell
 yarn run vercel deploy --prod
 ```
+
+## Migrating from other secrets managers
+
+Simple bash scripts can be used to migrate secrets from other secrets managers to SM. Usually, secrets can be exported in CSV format, the following shows an example from LastPass
+
+```csv
+url,username,password,totp,extra,name,grouping,fav
+http://example.com,example@example.com,my-secret,,,my-name,password,0
+http://demo.com,demo@example.com,my-secret2,,,my-name2,password,0
+```
+and the following bash script loops through the CSV entries and creates items in SM
+
+```shell
+#! /bin/bash
+
+TOKEN=$MY_SM_TOKEN # set token as environment variable
+
+while IFS="," read -r url username password totp extra name grouping fav
+do
+  curl "https://sm.vercel.app/api/v1.0/logins" \
+  -H "content-type: application/json" \
+  -H "authorization: $TOKEN" \
+  --data-raw "{\"data\":{\"type\":\"logins\",\"attributes\":{\"title\":\"$name\",\"path\":\"/\",\"username\":\"$username\",\"secret\":\"$password\",\"note\":\"$name\"}}}"
+
+done < <(tail -n +2 input.csv)
+
+```

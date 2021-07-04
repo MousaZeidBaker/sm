@@ -12,14 +12,12 @@ SM is an open-source self-hosted secrets manager with zero cost. The idea with S
 
 * [Vercel account](https://vercel.com/) to host the webb app
 
-* [Vercel CLI](https://vercel.com/cli) to deploy the web app
-
 ### Deploy infrastructure
 
 The `infrastructure.sh` script deploys the necessary AWS resources. The following resources will be deployed:
 
-* `cognito user-pool`
-* `cognito identity-pool`
+* `Cognito user-pool`
+* `Cognito identity-pool`
 * `IAM role`
 * `IAM policy`
 
@@ -60,6 +58,11 @@ Install dependencies
 ```shell
 yarn install
 ```
+
+Login to your Vercel account
+```shell
+yarn run vercel login
+``` 
 
 Link your local directory to a [Vercel Project](https://vercel.com/docs/platform/projects). You can link to an existing project, or preferably create a new one.
 

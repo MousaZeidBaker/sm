@@ -36,3 +36,5 @@ yarn-error.log*
 jwks.json
 
 infrastructure/output
+
+migration

@@ -26,7 +26,10 @@ A database is not needed as secrets will be stored encrypted in `AWS Systems Man
 In order to avoid latency, it's recommended to deploy the resources to `us-east-1` since it's the [default deployment region](https://vercel.com/support/articles/choosing-deployment-regions) for Vercel and cannot be changed for hobby accounts. To deploy the resources, create an `IAM user` with programmatic access and with administrator access, then run the following command. Delete the user onces the resources has been deployed. Take note of the output as it will be used as environment variables in the webb app.
 
 ```shell
-AWS_DEFAULT_REGION=us-east-1 AWS_ACCESS_KEY_ID=my-access-key AWS_SECRET_ACCESS_KEY=my-secret-access-key ./infrastructure/infrastructure.sh
+AWS_DEFAULT_REGION=us-east-1 \
+AWS_ACCESS_KEY_ID=my-access-key \
+AWS_SECRET_ACCESS_KEY=my-secret-access-key \
+./infrastructure/infrastructure.sh
 ```
 
 The resources should now be created. By default users can not sign themselves up from your app, but you can create users from the AWS Management Console. This behavior can of course be changed to match your preferences, learn more about creating users and how to change this setting [here](https://docs.aws.amazon.com/cognito/latest/developerguide/how-to-create-user-accounts.html).

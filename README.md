@@ -2,6 +2,9 @@
 
 SM is an open-source self-hosted secrets manager with zero cost. The idea with SM is that it must be completely free of any cost, thus all resources as well as hosting is picked with that in mind.
 
+## Demo
+![demo](https://raw.githubusercontent.com/MousaZeidBaker/sm/demo/media/sm-demo-2021-07-05.gif)
+
 ## Hosting your own SM
 
 ### Prerequisites

@@ -23,7 +23,7 @@ async function getRequest (req: NextApiRequest, res: NextApiResponse): Promise<v
   let item: LoginItem
   try {
     item = await repo.get(id, version)
-  } catch (err) {
+  } catch (err: any) {
     logger.info('Failed to get login item:', [ err ])
 
     switch(err.name) {
@@ -72,7 +72,7 @@ async function patchRequest (req: NextApiRequest, res: NextApiResponse): Promise
       req.body?.data?.attributes?.secret,
       req?.body?.data?.attributes.note
     )
-  } catch (err) {
+  } catch (err: any) {
     logger.info('Failed to update login item:', [ err ])
 
     switch(err.name) {
@@ -113,7 +113,7 @@ async function deleteRequest (req: NextApiRequest, res: NextApiResponse): Promis
 
   try {
     await repo.delete(id)
-  } catch (err) {
+  } catch (err: any) {
     logger.info('Failed to delete login item:', [ err ])
 
     switch(err.name) {

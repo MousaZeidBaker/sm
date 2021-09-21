@@ -49,7 +49,7 @@ export async function createAwsServiceClients(serviceName: ServiceName, idToken:
     // The following request makes the new credentials available
     const credentials = AWS.config.credentials as AWS.CognitoIdentityCredentials
     await credentials.getPromise()
-  } catch (err) {
+  } catch (err: any) {
     const msg = 'Failed to configure temporary AWS credentials'
     logger.info(msg, { err })
     throw new Error(msg)

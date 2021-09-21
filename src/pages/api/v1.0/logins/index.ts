@@ -18,7 +18,7 @@ async function get (res: NextApiResponse): Promise<void> {
   let items: LoginItem[]
   try {
     items = await repo.list()
-  } catch (err) {
+  } catch (err: any) {
     logger.error('Error on list login items:', [ err ])
 
     switch(err.name) {
@@ -71,7 +71,7 @@ async function post (req: NextApiRequest, res: NextApiResponse): Promise<void> {
       req?.body?.data?.attributes.secret,
       req?.body?.data?.attributes.note
     )
-  } catch (err) {
+  } catch (err: any) {
     logger.error('Error on create login item:', [ err ])
 
     switch(err.name) {

@@ -98,7 +98,7 @@ async function verifyToken(token: string): Promise<boolean> {
   }
 
   // Get the kid from the token and retrieve corresponding PEM
-  const kid = decodedJwt.header.kid
+  const kid = decodedJwt.header.kid as string
   const pem = pems[kid]
   if (!pem) {
     logger.info('PEM not found, invalid token')
@@ -118,7 +118,7 @@ async function verifyToken(token: string): Promise<boolean> {
   let decoded
   try {
     decoded = jwt.verify(token, pem, { issuer: iss }) as {[key: string]: any}
-  } catch (err) {
+  } catch (err: any) {
     logger.info('Could not to verify the signature of the JWT token', { err })
     return false
   }

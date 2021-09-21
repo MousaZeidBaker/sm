@@ -151,7 +151,7 @@ export default function Page(): JSX.Element {
     setDisableSaveButton(true)
     try {
       await changePassword(formValues.currentPassword, formValues.newPassword)
-    } catch (err) { 
+    } catch (err: any) {
       switch(err.name) {
         case 'NotAuthorizedException': {
           setCurrentPasswordError(true)

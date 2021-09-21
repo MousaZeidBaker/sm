@@ -21,7 +21,7 @@ export function encrypt(data: {[key: string]: any}): string {
  */
 export function isBase64(str: string): boolean {
   try {
-    return btoa(atob(str)) === str
+    return Buffer.from(str, 'base64').toString('base64') === str
   } catch (err: any) {
     return false
   }

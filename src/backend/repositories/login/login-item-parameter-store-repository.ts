@@ -63,7 +63,7 @@ export class LoginItemParameterStoreRepository implements LoginItemRepository {
     let response: SSM.GetParameterResult
     try {
       response = await getParameter(this.ssmClient, name)
-    } catch (err) {
+    } catch (err: any) {
       switch(err.name) {
         case 'ParameterNotFound':
         // AccessDeniedException is considered not found due to the IAM policy is
@@ -128,7 +128,7 @@ export class LoginItemParameterStoreRepository implements LoginItemRepository {
     const name = `/sm/${getCognitoIdentityUUID()}/logins/${id}`
     try {
       await updateParameter(this.ssmClient, name, updatedItem.encryptedData)
-    } catch (err) {  
+    } catch (err: any) {
       switch(err.name) {
         case 'ParameterNotFound':
         // AccessDeniedException is considered not found due to the IAM policy is
@@ -150,7 +150,7 @@ export class LoginItemParameterStoreRepository implements LoginItemRepository {
     const name = `/sm/${getCognitoIdentityUUID()}/logins/${id}`
     try {
       await deleteParameter(this.ssmClient, name)
-    } catch (err) {
+    } catch (err: any) {
       switch(err.name) {
         case 'ParameterNotFound':
         // AccessDeniedException is considered not found due to the IAM policy is

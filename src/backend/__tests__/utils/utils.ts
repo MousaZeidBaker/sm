@@ -22,7 +22,7 @@ export function encrypt(data: {[key: string]: any}): string {
 export function isBase64(str: string): boolean {
   try {
     return btoa(atob(str)) === str
-  } catch (err) {
+  } catch (err: any) {
     return false
   }
 }

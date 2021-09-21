@@ -70,7 +70,7 @@ export default function useSession() {
           },
           idToken: session.getIdToken().getJwtToken()
         })
-      } catch (err) {
+      } catch (err: any) {
         await signOut()
       }
     }
@@ -88,7 +88,7 @@ export default function useSession() {
       // Check if session is still valid, sing out if not
       try {
         await Auth.currentSession()
-      } catch (err) {
+      } catch (err: any) {
         await signOut()
       }
     }, ms)

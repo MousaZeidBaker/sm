@@ -1,9 +1,9 @@
 import React from 'react'
-import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
-import AutorenewIcon from '@material-ui/icons/Autorenew'
+import Button from '@mui/material/Button'
+import TextField from '@mui/material/TextField'
+import AutorenewIcon from '@mui/icons-material/Autorenew'
 import { GreenButton, RedButton } from './colored-buttons'
-import { makeStyles } from '@material-ui/core'
+import makeStyles from '@mui/styles/makeStyles'
 import generator from 'generate-password'
 
 const MAX_LENGTH = 50
@@ -78,124 +78,120 @@ export function GeneratePassword(props: Props): JSX.Element {
     }
 
 
-  return (
-    <>
-      {/* Autorenew button */}
-      <Button
+  return <>
+    {/* Autorenew button */}
+    <Button
+      className = {classes.button}
+      variant='contained'
+      title='Generate'
+      disabled={(!lowercase && !uppercase && !numbers && !symbols)}
+      onClick={handleAutorenew}>
+      <AutorenewIcon />
+    </Button>
+    <TextField
+      className = {classes.textField}
+      variant='outlined'
+      id='length'
+      label='Length'
+      margin='dense'
+      type='number'
+      InputProps={{ inputProps: { min: MIN_LENGTH, max: MAX_LENGTH } }}
+      value={length}
+      onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleLengthChange(event.target.valueAsNumber)}
+      onBlur={(event: React.FocusEvent<HTMLInputElement>) => handleLengthBlur(event.target.valueAsNumber)}
+    >
+    </TextField>
+    {/* Lowercase button */}
+    {lowercase && <>
+      <GreenButton
+        className = {classes.buttonNoTextTransform}
+        variant='contained'
+        color='primary'
+        title='Toggle lowercase on/off'
+        onClick={() => setLowercase(!lowercase)}
+      >
+        a-z
+      </GreenButton>
+    </>}
+    {!lowercase && <>
+      <RedButton
+        className = {classes.buttonNoTextTransform}
+        variant='contained'
+        color='primary'
+        title='Toggle lowercase on/off'
+        onClick={() => setLowercase(!lowercase)}
+      >
+        a-z
+      </RedButton>
+    </>}
+    {/* Uppercase button */}
+    {uppercase && <>
+      <GreenButton
         className = {classes.button}
         variant='contained'
-        color='default'
-        title='Generate'
-        disabled={(!lowercase && !uppercase && !numbers && !symbols)}
-        onClick={handleAutorenew}
+        color='primary'
+        title='Toggle uppercase on/off'
+        onClick={() => setUppercase(!uppercase)}
       >
-        <AutorenewIcon />
-      </Button>
-      <TextField
-        className = {classes.textField}
-        variant='outlined'
-        id='length'
-        label='Length'
-        margin='dense'
-        type='number'
-        InputProps={{ inputProps: { min: MIN_LENGTH, max: MAX_LENGTH } }}
-        value={length}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleLengthChange(event.target.valueAsNumber)}
-        onBlur={(event: React.FocusEvent<HTMLInputElement>) => handleLengthBlur(event.target.valueAsNumber)}
+        A-Z
+      </GreenButton>
+    </>}
+    {!uppercase && <>
+      <RedButton
+        className = {classes.button}
+        variant='contained'
+        color='primary'
+        title='Toggle uppercase on/off'
+        onClick={() => setUppercase(!uppercase)}
       >
-      </TextField>
-      {/* Lowercase button */}
-      {lowercase && <>
-        <GreenButton
-          className = {classes.buttonNoTextTransform}
-          variant='contained'
-          color='primary'
-          title='Toggle lowercase on/off'
-          onClick={() => setLowercase(!lowercase)}
-        >
-          a-z
-        </GreenButton>
-      </>}
-      {!lowercase && <>
-        <RedButton
-          className = {classes.buttonNoTextTransform}
-          variant='contained'
-          color='primary'
-          title='Toggle lowercase on/off'
-          onClick={() => setLowercase(!lowercase)}
-        >
-          a-z
-        </RedButton>
-      </>}
-      {/* Uppercase button */}
-      {uppercase && <>
-        <GreenButton
-          className = {classes.button}
-          variant='contained'
-          color='primary'
-          title='Toggle uppercase on/off'
-          onClick={() => setUppercase(!uppercase)}
-        >
-          A-Z
-        </GreenButton>
-      </>}
-      {!uppercase && <>
-        <RedButton
-          className = {classes.button}
-          variant='contained'
-          color='primary'
-          title='Toggle uppercase on/off'
-          onClick={() => setUppercase(!uppercase)}
-        >
-          A-Z
-        </RedButton>
-      </>}
-      {/* Numbers button */}
-      {numbers && <>
-        <GreenButton
-          className = {classes.button}
-          variant='contained'
-          color='primary'
-          title='Toggle numbers on/off'
-          onClick={() => setNumbers(!numbers)}
-        >
-          0-9
-        </GreenButton>
-      </>}
-      {!numbers && <>
-        <RedButton
-          className = {classes.button}
-          variant='contained'
-          color='primary'
-          title='Toggle numbers on/off'
-          onClick={() => setNumbers(!numbers)}
-        >
-          0-9
-        </RedButton>
-      </>}
-      {/* Symbols button */}
-      {symbols && <>
-        <GreenButton
-          className = {classes.button}
-          variant='contained'
-          color='primary'
-          title='Toggle symbols on/off'
-          onClick={() => setSymbols(!symbols)}
-        >
-          !#@
-        </GreenButton>
-      </>}
-      {!symbols && <>
-        <RedButton
-          className = {classes.button}
-          variant='contained'
-          color='primary'
-          title='Toggle symbols on/off'
-          onClick={() => setSymbols(!symbols)}
-        >
-          !#@
-        </RedButton>
-      </>}
-    </>
-  )
+        A-Z
+      </RedButton>
+    </>}
+    {/* Numbers button */}
+    {numbers && <>
+      <GreenButton
+        className = {classes.button}
+        variant='contained'
+        color='primary'
+        title='Toggle numbers on/off'
+        onClick={() => setNumbers(!numbers)}
+      >
+        0-9
+      </GreenButton>
+    </>}
+    {!numbers && <>
+      <RedButton
+        className = {classes.button}
+        variant='contained'
+        color='primary'
+        title='Toggle numbers on/off'
+        onClick={() => setNumbers(!numbers)}
+      >
+        0-9
+      </RedButton>
+    </>}
+    {/* Symbols button */}
+    {symbols && <>
+      <GreenButton
+        className = {classes.button}
+        variant='contained'
+        color='primary'
+        title='Toggle symbols on/off'
+        onClick={() => setSymbols(!symbols)}
+      >
+        !#@
+      </GreenButton>
+    </>}
+    {!symbols && <>
+      <RedButton
+        className = {classes.button}
+        variant='contained'
+        color='primary'
+        title='Toggle symbols on/off'
+        onClick={() => setSymbols(!symbols)}
+      >
+        !#@
+      </RedButton>
+    </>}
+  </>
 }

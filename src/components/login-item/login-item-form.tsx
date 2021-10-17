@@ -1,13 +1,13 @@
 import React from 'react'
-import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
-import DialogActions from '@material-ui/core/DialogActions'
-import DialogContent from '@material-ui/core/DialogContent'
-import CancelIcon from '@material-ui/icons/Cancel'
-import SaveIcon from '@material-ui/icons/Save'
+import Button from '@mui/material/Button'
+import TextField from '@mui/material/TextField'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import CancelIcon from '@mui/icons-material/Cancel'
+import SaveIcon from '@mui/icons-material/Save'
 import { GeneratePassword } from '../generate-password'
 import { CopyContentIcon } from '../../icons/content_copy-icon'
-import { makeStyles } from '@material-ui/core'
+import makeStyles from '@mui/styles/makeStyles'
 import { LoginItemApi } from '../../backend/models/login/login-item-api'
 
 const useStyles = makeStyles({
@@ -165,97 +165,91 @@ export function LoginItemDialog(props: Props): JSX.Element {
     props.handleSave(item)
   }
 
-  return (
-    <>
-      <DialogContent>
-      {/* Title text filed */}
+  return <>
+    <DialogContent>
+    {/* Title text filed */}
+    <TextField
+        autoFocus
+        fullWidth
+        variant='outlined'
+        margin='dense'
+        id='title'
+        label='Title'
+        type='text'
+        error={titleTextFieldError}
+        value={formValues.title}
+        onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChange('title', event.target.value)}
+      />
+      {/* Username text filed */}
       <TextField
-          autoFocus
-          fullWidth
-          variant='outlined'
-          margin='dense'
-          id='title'
-          label='Title'
-          type='text'
-          error={titleTextFieldError}
-          value={formValues.title}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChange('title', event.target.value)}
-        />
-        {/* Username text filed */}
-        <TextField
-          fullWidth
-          variant='outlined'
-          margin='dense'
-          id='username'
-          label='Username'
-          type='text'
-          error={usernameTextFieldError}
-          value={formValues.username}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChange('username', event.target.value)}
-        />
-        {/* Secret text filed */}
-        <TextField
-          fullWidth
-          variant='outlined'
-          margin='dense'
-          id='secret'
-          label='Secret'
-          type='text'
-          error={secretTextFieldError}
-          value={formValues.secret}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChange('secret', event.target.value)}
-        />
-        {/* Note text filed */}
-        <TextField
-          fullWidth
-          variant='outlined'
-          margin='dense'
-          id='note'
-          label='Note'
-          type='text'
-          multiline={true}
-          rows={4}
-          error={noteTextFieldError}
-          value={formValues.note}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChange('note', event.target.value)}
-        />
-        {/* Copy button */}
-        <Button
-          className={classes.button}
-          variant='contained'
-          color='default'
-          title='Copy'
-          onClick={() => navigator.clipboard.writeText(formValues.secret)}
-        >
-          <CopyContentIcon />
-        </Button>
-        {/* Generate password component */}
-        {/* @ts-expect-error */}
-        <GeneratePassword handleChange={handleChange} />
-      </DialogContent>
-      <DialogActions>
-        {/* Cancel button */}
-        <Button
-          variant='contained'
-          color='default'
-          title='Cancel'
-          startIcon={<CancelIcon />}
-          onClick={handleClose}
-        >
-          Cancel
-        </Button>
-        {/* Save button */}
-        <Button
-          variant='contained'
-          color='primary'
-          title='Save'
-          disabled={disableSaveButton}
-          startIcon={<SaveIcon />}
-          onClick={handleSave}
-        >
-          Save
-        </Button>
-      </DialogActions>
-    </>
-  )
+        fullWidth
+        variant='outlined'
+        margin='dense'
+        id='username'
+        label='Username'
+        type='text'
+        error={usernameTextFieldError}
+        value={formValues.username}
+        onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChange('username', event.target.value)}
+      />
+      {/* Secret text filed */}
+      <TextField
+        fullWidth
+        variant='outlined'
+        margin='dense'
+        id='secret'
+        label='Secret'
+        type='text'
+        error={secretTextFieldError}
+        value={formValues.secret}
+        onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChange('secret', event.target.value)}
+      />
+      {/* Note text filed */}
+      <TextField
+        fullWidth
+        variant='outlined'
+        margin='dense'
+        id='note'
+        label='Note'
+        type='text'
+        multiline={true}
+        rows={4}
+        error={noteTextFieldError}
+        value={formValues.note}
+        onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChange('note', event.target.value)}
+      />
+      {/* Copy button */}
+      <Button
+        className={classes.button}
+        variant='contained'
+        title='Copy'
+        onClick={() => navigator.clipboard.writeText(formValues.secret)}>
+        <CopyContentIcon />
+      </Button>
+      {/* Generate password component */}
+      {/* @ts-expect-error */}
+      <GeneratePassword handleChange={handleChange} />
+    </DialogContent>
+    <DialogActions>
+      {/* Cancel button */}
+      <Button
+        variant='contained'
+        title='Cancel'
+        startIcon={<CancelIcon />}
+        onClick={handleClose}>
+        Cancel
+      </Button>
+      {/* Save button */}
+      <Button
+        variant='contained'
+        color='primary'
+        title='Save'
+        disabled={disableSaveButton}
+        startIcon={<SaveIcon />}
+        onClick={handleSave}
+      >
+        Save
+      </Button>
+    </DialogActions>
+  </>
 }

@@ -2,7 +2,7 @@
 
 import React from 'react'
 import Document, { Html, Head, Main, NextScript } from 'next/document'
-import { ServerStyleSheets } from '@material-ui/core/styles'
+import ServerStyleSheets from '@mui/styles/ServerStyleSheets'
 
 const primaryColor = process.env.NEXT_PUBLIC_APP_PRIMARY_COLOR || '#2196f3'
 

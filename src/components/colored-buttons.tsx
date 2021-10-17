@@ -1,9 +1,11 @@
-import Button from '@material-ui/core/Button'
+import Button from '@mui/material/Button'
 import {
   green,
   red,
-} from '@material-ui/core/colors'
-import { withStyles, Theme } from '@material-ui/core/styles';
+} from '@mui/material/colors'
+import { Theme } from '@mui/material/styles'
+
+import withStyles from '@mui/styles/withStyles'
 
 export const GreenButton = withStyles((theme: Theme) => ({
   root: {

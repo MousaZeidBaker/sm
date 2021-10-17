@@ -2,11 +2,16 @@ import type { AppProps } from 'next/app'
 import { AmplifyAuthenticator, AmplifyAuthContainer } from '@aws-amplify/ui-react'
 import React from 'react'
 import useSession from '../components/useSession'
-import { withStyles } from '@material-ui/core'
+import withStyles from '@mui/styles/withStyles'
 import { SnackbarProvider } from 'notistack'
-import { createTheme, ThemeProvider, CssBaseline, Theme } from '@material-ui/core'
+import { createTheme, ThemeProvider, StyledEngineProvider, CssBaseline, Theme } from '@mui/material'
 import { PaletteMode } from '@mui/material'
-import { pink, grey } from '@material-ui/core/colors'
+import { pink } from '@mui/material/colors'
+
+declare module '@mui/styles/defaultTheme' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface DefaultTheme extends Theme {}
+}
 
 const primaryColor = process.env.NEXT_PUBLIC_APP_PRIMARY_COLOR || '#2196f3'
 
@@ -56,7 +61,7 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
   const theme: Theme = React.useMemo(() => {
     return createTheme({
       palette: {
-        type: paletteMode,
+        mode: paletteMode,
         primary: {
           main: primaryColor
         },
@@ -64,30 +69,25 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
           main: pink[500]
         }
       },
-      overrides: {
-        MuiAppBar: {
-          colorPrimary: {
-            backgroundColor: (paletteMode === 'light') ? primaryColor : grey[800]
-          }
-        }
-      }
     })
   }, [paletteMode])
 
   return (
     <ThemeContext.Provider value={{togglePaletteMode, paletteMode}}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-          <AmplifyAuthContainer>
-          <AmplifyAuthenticatorWithStyle>
-            <SnackbarProvider maxSnack={3}>
-              {session && <>
-                  <Component {...pageProps} />
-              </>}
-            </SnackbarProvider>
-          </AmplifyAuthenticatorWithStyle>
-        </AmplifyAuthContainer>
-      </ThemeProvider>
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+            <AmplifyAuthContainer>
+            <AmplifyAuthenticatorWithStyle>
+              <SnackbarProvider maxSnack={3}>
+                {session && <>
+                    <Component {...pageProps} />
+                </>}
+              </SnackbarProvider>
+            </AmplifyAuthenticatorWithStyle>
+          </AmplifyAuthContainer>
+        </ThemeProvider>
+      </StyledEngineProvider>
     </ThemeContext.Provider>
   )
 }

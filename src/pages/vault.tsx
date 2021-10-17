@@ -1,15 +1,15 @@
 import React from 'react'
 import { Layout } from '../components/layout'
-import Fab from '@material-ui/core/Fab'
-import AddIcon from '@material-ui/icons/Add'
+import Fab from '@mui/material/Fab'
+import AddIcon from '@mui/icons-material/Add'
 import { LoginItemApi } from '../backend/models/login/login-item-api'
 import { LoginItemDecryptedData } from '../backend/models/login/login-item'
 import { AddLoginItemFormDialog } from '../components/login-item/add-login-item-form-dialog'
-import { makeStyles } from '@material-ui/core/styles'
+import makeStyles from '@mui/styles/makeStyles'
 import useSession from '../components/useSession'
-import { Theme } from '@material-ui/core/styles'
-import LinearProgress from '@material-ui/core/LinearProgress'
-import Grid from '@material-ui/core/Grid'
+import { Theme } from '@mui/material/styles'
+import LinearProgress from '@mui/material/LinearProgress'
+import Grid from '@mui/material/Grid'
 import LoginItemCard from '../components/login-item/login-item-card'
 import { useSnackbar } from 'notistack'
 import Fuse from 'fuse.js'
@@ -214,7 +214,7 @@ export default function Page(): JSX.Element {
       <Grid
         className={classes.root}
         container={true}
-        justify='flex-start'
+        justifyContent='flex-start'
         spacing={2}
       >
         {/* Item cards */}

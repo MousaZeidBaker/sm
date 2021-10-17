@@ -1,18 +1,19 @@
 import React from 'react'
-import AppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
-import Typography from '@material-ui/core/Typography'
-import Button from '@material-ui/core/Button'
+import AppBar from '@mui/material/AppBar'
+import Toolbar from '@mui/material/Toolbar'
+import Typography from '@mui/material/Typography'
+import Button from '@mui/material/Button'
 import useSession from '../components/useSession'
 import { LogoutIcon } from '../icons/logout_icon'
-import Tabs from '@material-ui/core/Tabs'
-import Tab from '@material-ui/core/Tab'
+import Tabs from '@mui/material/Tabs'
+import Tab from '@mui/material/Tab'
 import { useRouter } from 'next/router'
-import BrightnessHighIcon from '@material-ui/icons/BrightnessHigh'
-import Brightness4Icon from '@material-ui/icons/Brightness4'
-import SearchIcon from '@material-ui/icons/Search'
-import InputBase from '@material-ui/core/InputBase'
-import { fade, makeStyles } from '@material-ui/core/styles'
+import BrightnessHighIcon from '@mui/icons-material/BrightnessHigh'
+import Brightness4Icon from '@mui/icons-material/Brightness4'
+import SearchIcon from '@mui/icons-material/Search'
+import InputBase from '@mui/material/InputBase'
+import { alpha } from '@mui/material/styles'
+import makeStyles from '@mui/styles/makeStyles'
 import { useMediaQuery } from 'react-responsive'
 import { ThemeContext } from '../pages/_app'
 
@@ -57,9 +58,9 @@ export function Header(props: Props): JSX.Element {
     search: {
       position: 'relative',
       borderRadius: theme.shape.borderRadius,
-      backgroundColor: fade(theme.palette.common.white, 0.15),
+      backgroundColor: alpha(theme.palette.common.white, 0.15),
       '&:hover': {
-        backgroundColor: fade(theme.palette.common.white, 0.25)
+        backgroundColor: alpha(theme.palette.common.white, 0.25)
       },
       marginRight: theme.spacing(2),
       marginLeft: 0,
@@ -84,7 +85,7 @@ export function Header(props: Props): JSX.Element {
     inputInput: {
       padding: theme.spacing(1, 1, 1, 0),
       // vertical padding + font size from searchIcon
-      paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+      paddingLeft: `calc(1em + ${theme.spacing(4)})`,
       transition: theme.transitions.create('width'),
       width: '100%',
       [theme.breakpoints.up('md')]: {
@@ -162,17 +163,14 @@ export function Header(props: Props): JSX.Element {
           <div>
             <div>
               {/* Toggle light/dark theme button */}
-              <Button
-                color='default'
-                title='Toggle light/dark theme'
-                onClick={() => togglePaletteMode()}
-              >
+              <Button title='Toggle light/dark theme' color='inherit' onClick={() => togglePaletteMode()}>
                 {themeContext.paletteMode === 'light' ? < Brightness4Icon/> : <BrightnessHighIcon />}
               </Button>
               {/* Sign out button */}
               <Button
                 variant='outlined'
                 title='Sign out'
+                color='inherit'
                 startIcon={<LogoutIcon />}
                 onClick={signOut}
               >
@@ -184,6 +182,12 @@ export function Header(props: Props): JSX.Element {
         {/* Tabs */}
         <Tabs
           value={tabValue}
+          textColor='inherit'
+          TabIndicatorProps={{
+            style: {
+              backgroundColor: "#fff"
+            }
+          }}
           onChange={(event, newValue) => handleTabChange(event, newValue)}
         >
           {tabs.map((item: any, index: number) =>

@@ -1,17 +1,17 @@
 import React from 'react'
 import { Layout } from '../components/layout'
 import useSession from '../components/useSession'
-import TextField from '@material-ui/core/TextField'
-import Accordion from '@material-ui/core/Accordion'
-import AccordionSummary from '@material-ui/core/AccordionSummary'
-import AccordionDetails from '@material-ui/core/AccordionDetails'
-import AccordionActions from '@material-ui/core/AccordionActions'
-import Typography from '@material-ui/core/Typography'
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import Button from '@material-ui/core/Button'
-import Divider from '@material-ui/core/Divider'
-import CancelIcon from '@material-ui/icons/Cancel'
-import SaveIcon from '@material-ui/icons/Save'
+import TextField from '@mui/material/TextField'
+import Accordion from '@mui/material/Accordion'
+import AccordionSummary from '@mui/material/AccordionSummary'
+import AccordionDetails from '@mui/material/AccordionDetails'
+import AccordionActions from '@mui/material/AccordionActions'
+import Typography from '@mui/material/Typography'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import Button from '@mui/material/Button'
+import Divider from '@mui/material/Divider'
+import CancelIcon from '@mui/icons-material/Cancel'
+import SaveIcon from '@mui/icons-material/Save'
 import { useSnackbar } from 'notistack'
 
 interface ChangePasswordFormValues {
@@ -37,7 +37,7 @@ export default function Page(): JSX.Element {
   const [newPasswordError, setNewPasswordError] = React.useState<boolean>(false)
   const [confirmNewPasswordError, setConfirmNewPasswordError] = React.useState<boolean>(false)
 
-  const [accordionExpanded, setAccordionExpanded] = React.useState(false);
+  const [accordionExpanded, setAccordionExpanded] = React.useState(false)
 
   const { session, changePassword } = useSession()
   const { enqueueSnackbar } = useSnackbar()
@@ -263,11 +263,9 @@ export default function Page(): JSX.Element {
           <Button
             size='small'
             variant='contained'
-            color='default'
             title='Cancel'
             startIcon={<CancelIcon />}
-            onClick={handleCancel}
-          >
+            onClick={handleCancel}>
             Cancel
           </Button>
           {/* Save button */}

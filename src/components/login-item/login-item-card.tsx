@@ -2,27 +2,27 @@ import React from 'react'
 import { OverflowMenu } from '../../components/overflow-menu'
 import { LoginItemApi } from '../../backend/models/login/login-item-api'
 import { LoginItemDecryptedData } from '../../backend/models/login/login-item'
-import { makeStyles } from '@material-ui/core/styles'
+import makeStyles from '@mui/styles/makeStyles'
 import useSession from '../../components/useSession'
-import { Theme } from '@material-ui/core/styles'
-import Typography from '@material-ui/core/Typography'
-import Grid from '@material-ui/core/Grid'
+import { Theme } from '@mui/material/styles'
+import Typography from '@mui/material/Typography'
+import Grid from '@mui/material/Grid'
 import clsx from 'clsx'
-import Card from '@material-ui/core/Card'
-import CardHeader from '@material-ui/core/CardHeader'
-import CardContent from '@material-ui/core/CardContent'
-import CardActions from '@material-ui/core/CardActions'
-import Collapse from '@material-ui/core/Collapse'
-import IconButton from '@material-ui/core/IconButton'
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import VisibilityIcon from '@material-ui/icons/Visibility'
-import VisibilityOff from '@material-ui/icons/VisibilityOff'
-import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
-import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
-import Button from '@material-ui/core/Button'
+import Card from '@mui/material/Card'
+import CardHeader from '@mui/material/CardHeader'
+import CardContent from '@mui/material/CardContent'
+import CardActions from '@mui/material/CardActions'
+import Collapse from '@mui/material/Collapse'
+import IconButton from '@mui/material/IconButton'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import VisibilityIcon from '@mui/icons-material/Visibility'
+import VisibilityOff from '@mui/icons-material/VisibilityOff'
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
+import Button from '@mui/material/Button'
 import { CopyContentIcon } from '../../icons/content_copy-icon'
-import Divider from '@material-ui/core/Divider'
-import CircularProgress from '@material-ui/core/CircularProgress'
+import Divider from '@mui/material/Divider'
+import CircularProgress from '@mui/material/CircularProgress'
 import { useSnackbar } from 'notistack'
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -177,7 +177,7 @@ export default function LoginItemCard(props: Props): JSX.Element {
             onClick={() => setExpanded(!expanded)}
             aria-expanded={expanded}
             aria-label='expand card'
-          >
+            size="large">
             <ExpandMoreIcon />
           </IconButton>
         </CardActions>
@@ -203,41 +203,33 @@ export default function LoginItemCard(props: Props): JSX.Element {
               <Button
                 className={classes.button}
                 size='small'
-                color='default'
                 title={showSecret ? 'Hide' : 'Show'}
-                onClick={() => setShowSecret(!showSecret)}
-              >
+                onClick={() => setShowSecret(!showSecret)}>
                 {showSecret ? < VisibilityOff/> : <VisibilityIcon />}
               </Button>
               {/* Copy button */}
               <Button
                 className={classes.button}
                 size='small'
-                color='default'
                 title='Copy'
-                onClick={() => navigator.clipboard.writeText(item.attributes.secret)}
-                >
+                onClick={() => navigator.clipboard.writeText(item.attributes.secret)}>
                   <CopyContentIcon/>
               </Button>
               {/* Arrow up button */}
               <Button
                 className={classes.button}
                 size='small'
-                color='default'
                 title='Version up'
-                onClick={() => handleVersionChange(item.id, item.attributes.version + 1)}
-              >
+                onClick={() => handleVersionChange(item.id, item.attributes.version + 1)}>
                 <ArrowUpwardIcon/>
               </Button>
               {/* Arrow down button */}
               <Button
                 className={classes.button}
                 size='small'
-                color='default'
                 title='Version down'
                 disabled={item.attributes.version < 2}
-                onClick={() => handleVersionChange(item.id, item.attributes.version - 1)}
-              >
+                onClick={() => handleVersionChange(item.id, item.attributes.version - 1)}>
                 <ArrowDownwardIcon/>
               </Button>
             </div>

@@ -1,12 +1,12 @@
 import React from 'react'
-import Button from '@material-ui/core/Button'
-import Dialog from '@material-ui/core/Dialog'
-import DialogActions from '@material-ui/core/DialogActions'
-import DialogContent from '@material-ui/core/DialogContent'
-import DialogContentText from '@material-ui/core/DialogContentText'
-import DialogTitle from '@material-ui/core/DialogTitle'
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
-import CancelIcon from '@material-ui/icons/Cancel'
+import Button from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogContentText from '@mui/material/DialogContentText'
+import DialogTitle from '@mui/material/DialogTitle'
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
+import CancelIcon from '@mui/icons-material/Cancel'
 import useSession from '../components/useSession'
 import { LoginItemApi } from '../backend/models/login/login-item-api'
 import { useSnackbar } from 'notistack'
@@ -61,41 +61,37 @@ export function DeleteItemAlertDialog(props: Props): JSX.Element {
     props.handleDelete()
   }
 
-  return (
-    <>
-      <Dialog
-        open={props.open}
-        aria-labelledby='alert-dialog-title'
-        aria-describedby='alert-dialog-description'
-        onClose={handleClose}
-      >
-        <DialogTitle id='alert-dialog-title'>{'Delete item?'}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id='alert-dialog-description'>
-            This action cannot be undone, the item will be deleted permanently. Are you sure you want to delete?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            variant='contained'
-            color='default'
-            title='Cancel'
-            startIcon={<CancelIcon />}
-            onClick={handleClose}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant='contained'
-            color='secondary'
-            title='Delete'
-            startIcon={<DeleteForeverIcon />}
-            onClick={handleDelete}
-          >
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </>
-  )
+  return <>
+    <Dialog
+      open={props.open}
+      aria-labelledby='alert-dialog-title'
+      aria-describedby='alert-dialog-description'
+      onClose={handleClose}
+    >
+      <DialogTitle id='alert-dialog-title'>{'Delete item?'}</DialogTitle>
+      <DialogContent>
+        <DialogContentText id='alert-dialog-description'>
+          This action cannot be undone, the item will be deleted permanently. Are you sure you want to delete?
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          variant='contained'
+          title='Cancel'
+          startIcon={<CancelIcon />}
+          onClick={handleClose}>
+          Cancel
+        </Button>
+        <Button
+          variant='contained'
+          color='secondary'
+          title='Delete'
+          startIcon={<DeleteForeverIcon />}
+          onClick={handleDelete}
+        >
+          Delete
+        </Button>
+      </DialogActions>
+    </Dialog>
+  </>
 }

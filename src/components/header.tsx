@@ -14,6 +14,7 @@ import SearchIcon from '@material-ui/icons/Search'
 import InputBase from '@material-ui/core/InputBase'
 import { fade, makeStyles } from '@material-ui/core/styles'
 import { useMediaQuery } from 'react-responsive'
+import { ThemeContext } from '../pages/_app'
 
 const tabs = [
   {
@@ -27,15 +28,14 @@ const tabs = [
 ]
 
 interface Props {
-  lightTheme: boolean
-  setLightTheme: (lightTheme: boolean) => void
   showSearchBar: boolean
   handleSearchChange: (pattern: string) => void
 }
 
-export function Header(props: Props) {
+export function Header(props: Props): JSX.Element {
   const { session, signOut } = useSession()
   const router = useRouter()
+  const themeContext = React.useContext(ThemeContext)
 
   // Determine current tab value
   let index = tabs.findIndex(item => item.url === router.pathname)
@@ -95,16 +95,16 @@ export function Header(props: Props) {
   const classes = useStyles()
 
   /**
-   * Handles light theme change
+   * Toggle palette mode
    * 
    * @return {void}
    */
-  const handleLightTheme = (lightTheme: boolean): void => {
-    // Execute parent component functionality
-    props.setLightTheme(lightTheme)
-
+  const togglePaletteMode = (): void => {
+    themeContext.togglePaletteMode()
+    // States are updated asynchronously, paletteMode will contain the previous value
+    const nextPaletteMode = themeContext.paletteMode === 'light' ? 'dark' : 'light'
     // Store value in local storage
-    localStorage.setItem('lightTheme', lightTheme.toString())
+    localStorage.setItem('themePaletteMode', nextPaletteMode)
   }
 
   /**
@@ -165,9 +165,9 @@ export function Header(props: Props) {
               <Button
                 color='default'
                 title='Toggle light/dark theme'
-                onClick={() => handleLightTheme(!props.lightTheme)}
+                onClick={() => togglePaletteMode()}
               >
-                {props.lightTheme ? < Brightness4Icon/> : <BrightnessHighIcon />}
+                {themeContext.paletteMode === 'light' ? < Brightness4Icon/> : <BrightnessHighIcon />}
               </Button>
               {/* Sign out button */}
               <Button

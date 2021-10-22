@@ -28,7 +28,8 @@ import { useSnackbar } from 'notistack'
 const useStyles = makeStyles((theme: Theme) => ({
   card: {
     padding: theme.spacing(2),
-    color: theme.palette.primary.main
+    color: theme.palette.primary.main,
+    wordBreak: 'break-all'
   },
   expand: {
     transform: 'rotate(0deg)',

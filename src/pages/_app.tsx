@@ -7,6 +7,7 @@ import { SnackbarProvider } from 'notistack'
 import { createTheme, ThemeProvider, StyledEngineProvider, CssBaseline, Theme } from '@mui/material'
 import { PaletteMode } from '@mui/material'
 import { pink } from '@mui/material/colors'
+import Head from 'next/head'
 
 declare module '@mui/styles/defaultTheme' {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -73,21 +74,27 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
   }, [paletteMode])
 
   return (
-    <ThemeContext.Provider value={{togglePaletteMode, paletteMode}}>
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-            <AmplifyAuthContainer>
-            <AmplifyAuthenticatorWithStyle>
-              <SnackbarProvider maxSnack={3}>
-                {session && <>
-                    <Component {...pageProps} />
-                </>}
-              </SnackbarProvider>
-            </AmplifyAuthenticatorWithStyle>
-          </AmplifyAuthContainer>
-        </ThemeProvider>
-      </StyledEngineProvider>
-    </ThemeContext.Provider>
+    <>
+      <Head>
+        <title>SecretsManager</title>
+        <meta name="description" content="SecretsManager: The secret manager in your hands" />
+      </Head>
+      <ThemeContext.Provider value={{togglePaletteMode, paletteMode}}>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+              <AmplifyAuthContainer>
+              <AmplifyAuthenticatorWithStyle>
+                <SnackbarProvider maxSnack={3}>
+                  {session && <>
+                      <Component {...pageProps} />
+                  </>}
+                </SnackbarProvider>
+              </AmplifyAuthenticatorWithStyle>
+            </AmplifyAuthContainer>
+          </ThemeProvider>
+        </StyledEngineProvider>
+      </ThemeContext.Provider>
+    </>
   )
 }

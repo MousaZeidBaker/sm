@@ -112,7 +112,7 @@ export function LoginItemDialog(props: Props): JSX.Element {
         return
       }
       case 'note': {
-        if (value.length >= 1 && value.length <= 50) {
+        if (value.length >= 1 && value.length <= 1000) {
           setNoteTextFieldError(false)
         } else {
           setNoteTextFieldError(true)

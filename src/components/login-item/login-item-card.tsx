@@ -166,9 +166,6 @@ export default function LoginItemCard(props: Props): JSX.Element {
           title={item.attributes.title}
           subheader={new Date(item.attributes.lastModifiedDate).toDateString()}
         />
-        <CardContent>
-          <Typography variant='body2' color='textSecondary'>{item.attributes.note}</Typography>
-        </CardContent>
         <CardActions disableSpacing>
           {/* Render expand button and handle card expansion */}
           <IconButton
@@ -198,6 +195,7 @@ export default function LoginItemCard(props: Props): JSX.Element {
             {!showSecret && <>
               <Typography paragraph>{item.attributes.secret.replace(/.?/g, '\u2022')}</Typography>
             </>}
+            <Typography paragraph color='textSecondary' style={{whiteSpace: 'pre-line'}}>{item.attributes.note}</Typography>
             <Divider />
             <div className={classes.buttons}>
               {/* Hide/Show button */}

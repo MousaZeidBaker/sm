@@ -101,7 +101,6 @@ export function OverflowMenu(props: Props): JSX.Element {
           <MoreVertIcon/>
         </Button>
         <Menu
-          id='overflow-menu'
           anchorEl={anchorEl}
           keepMounted
           open={Boolean(anchorEl)}

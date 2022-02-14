@@ -86,13 +86,13 @@ async function verifyToken(token: string): Promise<boolean> {
   }
 
   // Fail if token is not from our user pool
-  if (decodedJwt.payload.iss !== iss) {
+  if ((decodedJwt.payload as jwt.JwtPayload).iss !== iss) {
     logger.info('Invalid issuer')
     return false
   }
 
   // Reject the JWT if it's not an ID token
-  if (decodedJwt.payload.token_use !== 'id') {
+  if ((decodedJwt.payload as jwt.JwtPayload).token_use !== 'id') {
     logger.info('Not an ID token')
     return false
   }

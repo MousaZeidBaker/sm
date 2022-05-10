@@ -38,3 +38,5 @@ jwks.json
 infrastructure/output
 
 migration
+
+tsconfig.tsbuildinfo

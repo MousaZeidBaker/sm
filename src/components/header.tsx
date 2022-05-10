@@ -34,7 +34,8 @@ interface Props {
 }
 
 export function Header(props: Props): JSX.Element {
-  const { session, signOut } = useSession()
+  const { user, signOut } = useSession()
+
   const router = useRouter()
   const themeContext = React.useContext(ThemeContext)
 
@@ -140,7 +141,7 @@ export function Header(props: Props): JSX.Element {
          {isBigScreen && <>
             <Typography className={classes.title}>
               <small>Signed in as:</small><br/>
-              <strong>{session?.user.username}</strong>
+              <strong>{user?.username}</strong>
             </Typography>
           </>}
           {/* Show search bar only if parent component requires it */}

@@ -10,13 +10,13 @@
     "vercel": "vercel"
   },
   "dependencies": {
-    "@aws-amplify/ui-react": "^1.0.2",
+    "@aws-amplify/ui-react": "^2.16.2",
     "@emotion/react": "^11.5.0",
     "@emotion/styled": "^11.3.0",
     "@mui/icons-material": "^5.0.4",
     "@mui/material": "^5.0.4",
     "@mui/styles": "^5.0.1",
-    "aws-amplify": "^4.2.10",
+    "aws-amplify": "^4.3.21",
     "aws-sdk": "^2.847.0",
     "crypto-js": "^4.0.0",
     "fuse.js": "^6.4.6",

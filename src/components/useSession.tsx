@@ -4,7 +4,7 @@ import { HubCallback } from '@aws-amplify/core/lib/Hub'
 import { useAuthenticator } from '@aws-amplify/ui-react'
 
 export default function useSession() {
-  const { user, signOut } = useAuthenticator((context) => [context.authStatus, context.user, context.route])
+  const { user, signOut } = useAuthenticator((context) => [context.user])
 
   // Listen to Amplify events with Amplify Hub
   React.useEffect(() => {

@@ -61,7 +61,7 @@ export default function LoginItemCard(props: Props): JSX.Element {
   const [ loading, setLoading ] = React.useState<boolean>(false)
 
   const classes = useStyles()
-  const { session } = useSession()
+  const { user } = useSession()
   const { enqueueSnackbar } = useSnackbar()
 
   /**
@@ -86,7 +86,7 @@ export default function LoginItemCard(props: Props): JSX.Element {
     const response = await fetch(`/api/v1.0/${item.type}/${item.id}`, {
       method: 'PATCH',
       headers: {
-        'Authorization': session?.idToken || '',
+        'Authorization': user?.getSignInUserSession()?.getIdToken().getJwtToken() || '',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -123,7 +123,7 @@ export default function LoginItemCard(props: Props): JSX.Element {
 
     const response = await fetch(`/api/v1.0/logins/${id}?version=${version}`, {
       headers: {
-        'Authorization': session?.idToken || ''
+        'Authorization': user?.getSignInUserSession()?.getIdToken().getJwtToken() || ''
       }
     })
 

@@ -19,7 +19,7 @@ interface Props {
 }
 
 export function DeleteItemAlertDialog(props: Props): JSX.Element {
-  const { session } = useSession()
+  const { user } = useSession()
   const { enqueueSnackbar } = useSnackbar()
 
   /**
@@ -45,7 +45,7 @@ export function DeleteItemAlertDialog(props: Props): JSX.Element {
     const response = await fetch(`/api/v1.0/${props.item.type}/${props.item.id}`, {
       method: 'DELETE',
       headers: {
-        'Authorization': session?.idToken || '',
+        'Authorization': user?.getSignInUserSession()?.getIdToken().getJwtToken() || '',
       }
     })
 

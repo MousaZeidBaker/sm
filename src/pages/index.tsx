@@ -39,7 +39,7 @@ export default function Page(): JSX.Element {
 
   const [accordionExpanded, setAccordionExpanded] = React.useState(false)
 
-  const { session, changePassword } = useSession()
+  const { user, changePassword } = useSession()
   const { enqueueSnackbar } = useSnackbar()
 
   // Determine if save button should be disabled
@@ -186,7 +186,7 @@ export default function Page(): JSX.Element {
           shrink: true
         }}
         type='text'
-        value={session?.user.username}
+        value={user?.username}
         disabled={true}
       />
       {/* Email text filed */}
@@ -199,7 +199,7 @@ export default function Page(): JSX.Element {
           shrink: true
         }}
         type='text'
-        value={session?.user.attributes.email}
+        value={user?.attributes?.email}
         disabled={true}
       />
       <Accordion

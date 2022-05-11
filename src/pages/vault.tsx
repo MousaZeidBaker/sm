@@ -4,7 +4,7 @@ import Fab from '@mui/material/Fab'
 import AddIcon from '@mui/icons-material/Add'
 import { LoginItemApi } from '../backend/models/login/login-item-api'
 import { LoginItemDecryptedData } from '../backend/models/login/login-item'
-import { AddLoginItemFormDialog } from '../components/login-item/add-login-item-form-dialog'
+import { LoginItemFormDialog } from '../components/login-item/login-item-form-dialog'
 import makeStyles from '@mui/styles/makeStyles'
 import useSession from '../components/useSession'
 import { Theme } from '@mui/material/styles'
@@ -112,7 +112,6 @@ export default function Page(): JSX.Element {
    * Handles add event
    * 
    * @param {LoginItemApi} item - The item to add
-   * 
    * @return {Promise<void>}
    */
   const handleAdd = async (item: LoginItemApi): Promise<void> => {
@@ -191,7 +190,7 @@ export default function Page(): JSX.Element {
     }
   }
 
-  const cards = itemsToShow.map((item: LoginItemApi): JSX.Element => (
+  itemsToShow.map((item: LoginItemApi): JSX.Element => (
     <LoginItemCard
       key={item.id}
       item={item}
@@ -239,10 +238,24 @@ export default function Page(): JSX.Element {
       </div>
       <div>
         {/* An input form for adding items */}
-        <AddLoginItemFormDialog
+        <LoginItemFormDialog
+          title='Add item'
           open={openAddLoginItemFormDialog}
           setOpen={setOpenAddLoginItemFormDialog}
-          handleAdd={(item: LoginItemApi) => handleAdd(item)}
+          item={{
+            id: '',
+            type: 'logins',
+            attributes: {
+              version: 0,
+              lastModifiedDate: new Date(), 
+              title: '',
+              path: '/',
+              username: '',
+              secret: '',
+              note: ''
+            }
+          }}
+          handleSave={(item: LoginItemApi) => handleAdd(item)}
         />
       </div>
     </Layout>

@@ -24,6 +24,11 @@ import { CopyContentIcon } from '../../icons/content_copy-icon'
 import Divider from '@mui/material/Divider'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useSnackbar } from 'notistack'
+import MenuItem from '@mui/material/MenuItem'
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
+import CancelIcon from '@mui/icons-material/Cancel'
+import { AlertDialog } from '../alert-dialog'
+import { LoginItemFormDialog } from '../login-item/login-item-form-dialog'
 
 const useStyles = makeStyles((theme: Theme) => ({
   card: {
@@ -67,7 +72,7 @@ export default function LoginItemCard(props: Props): JSX.Element {
   /**
    * Handles edit event
    * 
-   * @param {LoginItemApi} item - The item to update
+   * @param {LoginItemApi} item - The updated item
    * @return {Promise<void>}
    */
   const handleEdit = async (item: LoginItemApi): Promise<void> => {
@@ -112,6 +117,38 @@ export default function LoginItemCard(props: Props): JSX.Element {
   }
 
   /**
+   * Handles delete event
+   * 
+   * @return {Promise<void>}
+   */
+  const handleDelete = async (): Promise<void> => {
+    setLoading(true)
+
+    enqueueSnackbar("Deleting item...", { variant: 'info' })
+
+    // API request to delete item
+    const response = await fetch(`/api/v1.0/${item.type}/${item.id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': user?.getSignInUserSession()?.getIdToken().getJwtToken() || '',
+      }
+    })
+
+    // Show snackbar message
+    if (response.status === 204) {
+      // Execute parent component functionality
+      props.handleDelete(item.id)
+
+      enqueueSnackbar("Success! Item deleted.", { variant: 'success' })
+    } else {
+      enqueueSnackbar("Error! Couldn't delete item.", { variant: 'error' })
+      return
+    }
+
+    setLoading(false)
+  }
+
+  /**
    * Handles version change event
    * 
    * @param {string} id - The id of the item
@@ -139,102 +176,182 @@ export default function LoginItemCard(props: Props): JSX.Element {
     setLoading(false)
   }
 
+  const [openMenu, setOpenMenu] = React.useState(false)
+  const [openEditFormDialog, setOpenEditFormDialog] = React.useState(false)
+  const [openDeleteAlertDialog, setOpenDeleteAlertDialog] = React.useState(false)
+
+  /**
+   * Handles menu edit event
+   * 
+   * @return {void}
+   */
+  const handleMenuEdit = (): void => {
+    // Open edit dialog
+    setOpenEditFormDialog(true)
+
+    // Close overflow menu
+    setOpenMenu(false)
+  }
+
+  /**
+   * Handles menu delete event
+   * 
+   * @return {void}
+   */
+  const handleMenuDelete = (): void => {
+    // Open delete dialog
+    setOpenDeleteAlertDialog(true)
+
+    // Close overflow menu
+    setOpenMenu(false)
+  }
+
   return (
-    <Grid key={item.id} item={true} xs={12} sm={4}>
-      <Card className={classes.card}>
-        <CardHeader
-          action={
-            <div>
-              {/* Render an overflow menu */}
-              <div>
-                {!loading && <>
-                  <OverflowMenu
-                    item={item}
-                    handleEdit={(item: LoginItemApi) => handleEdit(item)}
-                    handleDelete={() => props.handleDelete(item.id)}
-                  />
+    <>
+      <>
+        {/* A grid containing all item cards */}
+        <Grid key={item.id} item={true} xs={12} sm={4}>
+          <Card className={classes.card}>
+            <CardHeader
+              action={
+                <div>
+                  {/* Render an overflow menu */}
+                  <div>
+                    {!loading && <>
+                      <OverflowMenu
+                        open={openMenu}
+                        setOpen={setOpenMenu}
+                        menuItems={[
+                          <MenuItem key="edit" onClick={handleMenuEdit}>Edit</MenuItem>,
+                          <MenuItem key="delete" onClick={handleMenuDelete}>Delete</MenuItem>
+                        ]}
+                      />
+                    </>}
+                  </div>
+                  {/* Render a progress bar */}
+                  <div>
+                    {loading && <>
+                      <CircularProgress/>
+                    </>}
+                  </div>
+                </div>
+              }
+              title={item.attributes.title}
+              subheader={new Date(item.attributes.lastModifiedDate).toDateString()}
+            />
+            <CardActions disableSpacing>
+              {/* Render expand button and handle card expansion */}
+              <IconButton
+                className={clsx(classes.expand, {
+                  [classes.expandOpen]: expanded,
+                })}
+                onClick={() => setExpanded(!expanded)}
+                aria-expanded={expanded}
+                aria-label='expand card'
+                size="large">
+                <ExpandMoreIcon />
+              </IconButton>
+            </CardActions>
+            <Collapse in={expanded} timeout='auto' unmountOnExit>
+              <CardContent>
+                {/* Display item data */}
+                <Typography paragraph color='textSecondary'>Version:</Typography>
+                <Typography paragraph>{item.attributes.version}</Typography>
+                <Typography paragraph color='textSecondary'>Username:</Typography>
+                <Typography paragraph>{item.attributes.username}</Typography>
+                <Typography paragraph color='textSecondary'>Secret:</Typography>
+                {/* Show secret */}
+                {showSecret && <>
+                  <Typography paragraph>{item.attributes.secret}</Typography>
                 </>}
-              </div>
-              {/* Render a progress bar */}
-              <div>
-                {loading && <>
-                  <CircularProgress/>
+                {/* Hide secret */}
+                {!showSecret && <>
+                  <Typography paragraph>{item.attributes.secret.replace(/.?/g, '\u2022')}</Typography>
                 </>}
-              </div>
-            </div>
-          }
-          title={item.attributes.title}
-          subheader={new Date(item.attributes.lastModifiedDate).toDateString()}
+                <Typography paragraph color='textSecondary' style={{whiteSpace: 'pre-line'}}>{item.attributes.note}</Typography>
+                <Divider />
+                <div className={classes.buttons}>
+                  {/* Hide/Show button */}
+                  <Button
+                    className={classes.button}
+                    size='small'
+                    title={showSecret ? 'Hide' : 'Show'}
+                    onClick={() => setShowSecret(!showSecret)}>
+                    {showSecret ? < VisibilityOff/> : <VisibilityIcon />}
+                  </Button>
+                  {/* Copy button */}
+                  <Button
+                    className={classes.button}
+                    size='small'
+                    title='Copy'
+                    onClick={() => navigator.clipboard.writeText(item.attributes.secret)}>
+                      <CopyContentIcon/>
+                  </Button>
+                  {/* Arrow up button */}
+                  <Button
+                    className={classes.button}
+                    size='small'
+                    title='Version up'
+                    onClick={() => handleVersionChange(item.id, item.attributes.version + 1)}>
+                    <ArrowUpwardIcon/>
+                  </Button>
+                  {/* Arrow down button */}
+                  <Button
+                    className={classes.button}
+                    size='small'
+                    title='Version down'
+                    disabled={item.attributes.version < 2}
+                    onClick={() => handleVersionChange(item.id, item.attributes.version - 1)}>
+                    <ArrowDownwardIcon/>
+                  </Button>
+                </div>
+              </CardContent>
+            </Collapse>
+          </Card>
+        </Grid>
+      </>
+      <>
+        {/* An input form for editing items */}
+        <LoginItemFormDialog
+          title='Edit item'
+          open={openEditFormDialog}
+          setOpen={setOpenEditFormDialog}
+          item={props.item}
+          handleSave={(item: LoginItemApi) => handleEdit(item)}
         />
-        <CardActions disableSpacing>
-          {/* Render expand button and handle card expansion */}
-          <IconButton
-            className={clsx(classes.expand, {
-              [classes.expandOpen]: expanded,
-            })}
-            onClick={() => setExpanded(!expanded)}
-            aria-expanded={expanded}
-            aria-label='expand card'
-            size="large">
-            <ExpandMoreIcon />
-          </IconButton>
-        </CardActions>
-        <Collapse in={expanded} timeout='auto' unmountOnExit>
-          <CardContent>
-            {/* Display item data */}
-            <Typography paragraph color='textSecondary'>Version:</Typography>
-            <Typography paragraph>{item.attributes.version}</Typography>
-            <Typography paragraph color='textSecondary'>Username:</Typography>
-            <Typography paragraph>{item.attributes.username}</Typography>
-            <Typography paragraph color='textSecondary'>Secret:</Typography>
-            {/* Show secret */}
-            {showSecret && <>
-              <Typography paragraph>{item.attributes.secret}</Typography>
-            </>}
-            {/* Hide secret */}
-            {!showSecret && <>
-              <Typography paragraph>{item.attributes.secret.replace(/.?/g, '\u2022')}</Typography>
-            </>}
-            <Typography paragraph color='textSecondary' style={{whiteSpace: 'pre-line'}}>{item.attributes.note}</Typography>
-            <Divider />
-            <div className={classes.buttons}>
-              {/* Hide/Show button */}
-              <Button
-                className={classes.button}
-                size='small'
-                title={showSecret ? 'Hide' : 'Show'}
-                onClick={() => setShowSecret(!showSecret)}>
-                {showSecret ? < VisibilityOff/> : <VisibilityIcon />}
-              </Button>
-              {/* Copy button */}
-              <Button
-                className={classes.button}
-                size='small'
-                title='Copy'
-                onClick={() => navigator.clipboard.writeText(item.attributes.secret)}>
-                  <CopyContentIcon/>
-              </Button>
-              {/* Arrow up button */}
-              <Button
-                className={classes.button}
-                size='small'
-                title='Version up'
-                onClick={() => handleVersionChange(item.id, item.attributes.version + 1)}>
-                <ArrowUpwardIcon/>
-              </Button>
-              {/* Arrow down button */}
-              <Button
-                className={classes.button}
-                size='small'
-                title='Version down'
-                disabled={item.attributes.version < 2}
-                onClick={() => handleVersionChange(item.id, item.attributes.version - 1)}>
-                <ArrowDownwardIcon/>
-              </Button>
-            </div>
-          </CardContent>
-        </Collapse>
-      </Card>
-    </Grid>
+      </>
+      <>
+        {/* An alert dialog that asks for confirmation before deleting */}
+          <AlertDialog
+            open={openDeleteAlertDialog}
+            title="Delete item?"
+            content="This action cannot be undone, the item will be deleted permanently. Are you sure you want to delete?"
+            actions={
+              <>
+                <Button
+                  variant='contained'
+                  title='Cancel'
+                  startIcon={<CancelIcon />}
+                  onClick={() => {setOpenDeleteAlertDialog(false)}}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant='contained'
+                  title='Delete'
+                  startIcon={<DeleteForeverIcon />}
+                  onClick={() => {
+                    setOpenDeleteAlertDialog(false)
+                    handleDelete()
+                  }}
+                  color='secondary'
+                >
+                  Delete
+                </Button>
+              </>
+            }
+          />
+      </>
+    </>
   )
 }

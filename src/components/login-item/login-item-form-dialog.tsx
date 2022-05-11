@@ -1,7 +1,9 @@
 import React from 'react'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
+import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
+import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import CancelIcon from '@mui/icons-material/Cancel'
 import SaveIcon from '@mui/icons-material/Save'
@@ -25,13 +27,14 @@ export interface LoginItemFormValues {
 }
 
 interface Props {
+  title: string
   open: boolean
   setOpen: (open: boolean) => void
   item: LoginItemApi
   handleSave: (item: LoginItemApi) => void
 }
 
-export function LoginItemDialog(props: Props): JSX.Element {
+export function LoginItemFormDialog(props: Props): JSX.Element {
   const [formValues, setFormValues] = React.useState<LoginItemFormValues>(props.item.attributes)
   const [titleTextFieldError, setTitleTextFieldError] = React.useState<boolean>(false)
   const [usernameTextFieldError, setUsernameTextFieldError] = React.useState<boolean>(false)
@@ -65,6 +68,7 @@ export function LoginItemDialog(props: Props): JSX.Element {
    * @return {void}
    */
   const handleClose = (): void => {
+    // Close dialog
     props.setOpen(false)
     // Restore form values to their initial value
     setFormValues(props.item.attributes)
@@ -144,7 +148,7 @@ export function LoginItemDialog(props: Props): JSX.Element {
    * @return {Promise<void>}
    */
   const handleSave = async (): Promise<void> => {
-    // Close dialog immediately
+    // Close dialog
     props.setOpen(false)
 
     // Prepare new item
@@ -165,91 +169,100 @@ export function LoginItemDialog(props: Props): JSX.Element {
     props.handleSave(item)
   }
 
-  return <>
-    <DialogContent>
-    {/* Title text filed */}
-    <TextField
-        autoFocus
-        fullWidth
-        variant='outlined'
-        margin='dense'
-        id='title'
-        label='Title'
-        type='text'
-        error={titleTextFieldError}
-        value={formValues.title}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChange('title', event.target.value)}
-      />
-      {/* Username text filed */}
-      <TextField
-        fullWidth
-        variant='outlined'
-        margin='dense'
-        id='username'
-        label='Username'
-        type='text'
-        error={usernameTextFieldError}
-        value={formValues.username}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChange('username', event.target.value)}
-      />
-      {/* Secret text filed */}
-      <TextField
-        fullWidth
-        variant='outlined'
-        margin='dense'
-        id='secret'
-        label='Secret'
-        type='text'
-        error={secretTextFieldError}
-        value={formValues.secret}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChange('secret', event.target.value)}
-      />
-      {/* Note text filed */}
-      <TextField
-        fullWidth
-        variant='outlined'
-        margin='dense'
-        id='note'
-        label='Note'
-        type='text'
-        multiline={true}
-        rows={4}
-        error={noteTextFieldError}
-        value={formValues.note}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChange('note', event.target.value)}
-      />
-      {/* Copy button */}
-      <Button
-        className={classes.button}
-        variant='contained'
-        title='Copy'
-        onClick={() => navigator.clipboard.writeText(formValues.secret)}>
-        <CopyContentIcon />
-      </Button>
-      {/* Generate password component */}
-      {/* @ts-expect-error */}
-      <GeneratePassword handleChange={handleChange} />
-    </DialogContent>
-    <DialogActions>
-      {/* Cancel button */}
-      <Button
-        variant='contained'
-        title='Cancel'
-        startIcon={<CancelIcon />}
-        onClick={handleClose}>
-        Cancel
-      </Button>
-      {/* Save button */}
-      <Button
-        variant='contained'
-        color='primary'
-        title='Save'
-        disabled={disableSaveButton}
-        startIcon={<SaveIcon />}
-        onClick={handleSave}
+  return (
+    <>
+      <Dialog
+        open={props.open}
+        // onClose={() => setOpenAddLoginItemFormDialog(false)}
+        aria-labelledby='form-dialog-title'
       >
-        Save
-      </Button>
-    </DialogActions>
-  </>
+        <DialogTitle id='form-dialog-title'>{props.title}</DialogTitle>
+        <DialogContent>
+        {/* Title text filed */}
+        <TextField
+            autoFocus
+            fullWidth
+            variant='outlined'
+            margin='dense'
+            id='title'
+            label='Title'
+            type='text'
+            error={titleTextFieldError}
+            value={formValues.title}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChange('title', event.target.value)}
+          />
+          {/* Username text filed */}
+          <TextField
+            fullWidth
+            variant='outlined'
+            margin='dense'
+            id='username'
+            label='Username'
+            type='text'
+            error={usernameTextFieldError}
+            value={formValues.username}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChange('username', event.target.value)}
+          />
+          {/* Secret text filed */}
+          <TextField
+            fullWidth
+            variant='outlined'
+            margin='dense'
+            id='secret'
+            label='Secret'
+            type='text'
+            error={secretTextFieldError}
+            value={formValues.secret}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChange('secret', event.target.value)}
+          />
+          {/* Note text filed */}
+          <TextField
+            fullWidth
+            variant='outlined'
+            margin='dense'
+            id='note'
+            label='Note'
+            type='text'
+            multiline={true}
+            rows={4}
+            error={noteTextFieldError}
+            value={formValues.note}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChange('note', event.target.value)}
+          />
+          {/* Copy button */}
+          <Button
+            className={classes.button}
+            variant='contained'
+            title='Copy'
+            onClick={() => navigator.clipboard.writeText(formValues.secret)}>
+            <CopyContentIcon />
+          </Button>
+          {/* Generate password component */}
+          {/* @ts-expect-error */}
+          <GeneratePassword handleChange={handleChange} />
+        </DialogContent>
+        <DialogActions>
+          {/* Cancel button */}
+          <Button
+            variant='contained'
+            title='Cancel'
+            startIcon={<CancelIcon />}
+            onClick={handleClose}>
+            Cancel
+          </Button>
+          {/* Save button */}
+          <Button
+            variant='contained'
+            color='primary'
+            title='Save'
+            disabled={disableSaveButton}
+            startIcon={<SaveIcon />}
+            onClick={handleSave}
+          >
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  )
 }

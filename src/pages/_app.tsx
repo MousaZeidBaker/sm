@@ -1,5 +1,7 @@
 import type { AppProps } from 'next/app'
 import { Authenticator, useTheme, View, Text } from '@aws-amplify/ui-react'
+import { setupAmplifyListener } from '../components/useSession'
+import { IdleAlertDialog } from '../components/useSession'
 import { Amplify } from 'aws-amplify'
 import '@aws-amplify/ui-react/styles.css'
 import React from 'react'
@@ -42,7 +44,7 @@ function getItemFromLocalStorage (key: string): string | null {
 
 export const ThemeContext = React.createContext({ togglePaletteMode: () => {}, paletteMode: 'light' })
 
-export default function App({ Component, pageProps }: AppProps): JSX.Element {
+function App({ Component, pageProps }: AppProps): JSX.Element {
   // Remove the server-side injected CSS
   React.useEffect(() => {
     const jssStyles = document.querySelector('#jss-server-side')
@@ -50,6 +52,8 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
       jssStyles.parentElement?.removeChild(jssStyles)
     }
   }, [])
+
+  setupAmplifyListener()
 
   const initialPaletteMode = getItemFromLocalStorage('themePaletteMode') as PaletteMode || 'light'
   const [paletteMode, setPaletteMode] = React.useState<PaletteMode>(initialPaletteMode)
@@ -74,6 +78,28 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
     })
   }, [paletteMode])
 
+  return (
+    <>
+      <Head>
+        <title>SecretsManager</title>
+        <meta name="description" content="SecretsManager: The secret manager in your hands" />
+      </Head>
+      <ThemeContext.Provider value={{togglePaletteMode, paletteMode}}>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+              <SnackbarProvider maxSnack={3}>
+                <IdleAlertDialog/>
+                <Component {...pageProps} />
+              </SnackbarProvider>
+          </ThemeProvider>
+        </StyledEngineProvider>
+      </ThemeContext.Provider>
+    </>
+  )
+}
+
+export default function (props: AppProps): JSX.Element {
   const amplifyComponents = {
     Header() {
       const { tokens } = useTheme();
@@ -103,21 +129,8 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
 
   return (
     <>
-      <Head>
-        <title>SecretsManager</title>
-        <meta name="description" content="SecretsManager: The secret manager in your hands" />
-      </Head>
       <Authenticator hideSignUp={true} components={amplifyComponents}>
-        <ThemeContext.Provider value={{togglePaletteMode, paletteMode}}>
-          <StyledEngineProvider injectFirst>
-            <ThemeProvider theme={theme}>
-              <CssBaseline />
-                <SnackbarProvider maxSnack={3}>
-                  <Component {...pageProps} />
-                </SnackbarProvider>
-            </ThemeProvider>
-          </StyledEngineProvider>
-        </ThemeContext.Provider>
+        <App {...props}/>
       </Authenticator>
     </>
   )

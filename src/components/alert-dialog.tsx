@@ -10,6 +10,7 @@ interface Props {
   title: string
   content: string
   actions: JSX.Element
+  progress?: JSX.Element
 }
 
 export function AlertDialog(props: Props): JSX.Element {
@@ -20,6 +21,7 @@ export function AlertDialog(props: Props): JSX.Element {
         aria-labelledby='dialog-title'
         aria-describedby='dialog-description'
       >
+        {props.progress}
         <DialogTitle id='dialog-title'>{props.title}</DialogTitle>
         <DialogContent>
           <DialogContentText id='-dialog-description'>

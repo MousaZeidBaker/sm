@@ -114,9 +114,9 @@ export function Header(props: Props): JSX.Element {
    * 
    * @param {React.ChangeEvent<{}>} event
    * @param {number} newValue
-   * @return {Promise<void>}
+   * @return {void}
    */
-  const handleTabChange = async (event: React.ChangeEvent<{}>, newValue: number): Promise<void> => {
+  const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number): void => {
     event.preventDefault()
     // Navigate to the new tab page
     const tab = tabs[newValue]
@@ -127,9 +127,9 @@ export function Header(props: Props): JSX.Element {
    * Handles search change event
    * 
    * @param {React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>} event
-   * @return {Promise<void>}
+   * @return {void}
    */
-  const handleSearchChange = async (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>): Promise<void> => {
+  const handleSearchChange = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>): void => {
     props.handleSearchChange(event.target.value)
   }
 

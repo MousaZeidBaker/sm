@@ -98,9 +98,9 @@ export function IdleAlertDialog (): JSX.Element {
   /**
    * Handles cancel event
    * 
-   * @return {Promise<void>}
+   * @return {void}
    */
-  const handleCancel = async (): Promise<void> => {
+  const handleCancel = (): void => {
     setOpenAlertDialog(false)
     idleTimer.reset()
   }

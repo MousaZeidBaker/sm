@@ -150,6 +150,10 @@ export function LoginItemFormDialog(props: Props): JSX.Element {
   const handleSave = async (): Promise<void> => {
     // Close dialog
     props.setOpen(false)
+    // In case its add new item form (empty id), make sure to clean up the form
+    if (props.item.id === '') {
+      setFormValues(props.item.attributes)
+    }
 
     // Prepare new item
     const item: LoginItemApi = {
@@ -173,7 +177,7 @@ export function LoginItemFormDialog(props: Props): JSX.Element {
     <>
       <Dialog
         open={props.open}
-        // onClose={() => setOpenAddLoginItemFormDialog(false)}
+        onClose={handleClose}
         aria-labelledby='form-dialog-title'
       >
         <DialogTitle id='form-dialog-title'>{props.title}</DialogTitle>

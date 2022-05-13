@@ -83,6 +83,8 @@ function App({ Component, pageProps }: AppProps): JSX.Element {
       <Head>
         <title>SecretsManager</title>
         <meta name="description" content="SecretsManager: The secret manager in your hands" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="icon" type="image/png" href="/favicon.png" />
       </Head>
       <ThemeContext.Provider value={{togglePaletteMode, paletteMode}}>
         <StyledEngineProvider injectFirst>

@@ -145,9 +145,9 @@ export function LoginItemFormDialog(props: Props): JSX.Element {
   /**
    * Handles save event
    * 
-   * @return {Promise<void>}
+   * @return {void}
    */
-  const handleSave = async (): Promise<void> => {
+  const handleSave = (): void => {
     // Close dialog
     props.setOpen(false)
     // In case its add new item form (empty id), make sure to clean up the form

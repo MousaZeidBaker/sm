@@ -39,11 +39,11 @@ export function GeneratePassword(props: Props): JSX.Element {
   const classes = useStyles()
 
   /**
-   * Handles handle autorenew event, generates a password
+   * Handles autorenew event, generates a password
    * 
    * @return {void}
    */
-  const handleAutorenew = async (): Promise<void> => {
+  const handleAutorenew = (): void => {
     const password = generator.generate({
       length: length,
       lowercase: lowercase,
@@ -59,7 +59,7 @@ export function GeneratePassword(props: Props): JSX.Element {
    * 
    * @return {void}
    */
-  const handleLengthChange = async (length: number): Promise<void> => {
+  const handleLengthChange = (length: number): void => {
     setLength(length)
   }
 
@@ -68,15 +68,14 @@ export function GeneratePassword(props: Props): JSX.Element {
    * 
    * @return {void}
    */
-    const handleLengthBlur = async (length: number): Promise<void> => { 
-      if (length < MIN_LENGTH || isNaN(length)) {
-        setLength(MIN_LENGTH)
-      }
-      if (length > MAX_LENGTH) {
-        setLength(MAX_LENGTH)
-      }
+  const handleLengthBlur = (length: number): void => { 
+    if (length < MIN_LENGTH || isNaN(length)) {
+      setLength(MIN_LENGTH)
     }
-
+    if (length > MAX_LENGTH) {
+      setLength(MAX_LENGTH)
+    }
+  }
 
   return <>
     {/* Autorenew button */}

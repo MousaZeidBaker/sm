@@ -316,7 +316,7 @@ export default function LoginItemCard(props: Props): JSX.Element {
           title='Edit item'
           open={openEditFormDialog}
           setOpen={setOpenEditFormDialog}
-          item={props.item}
+          item={item}
           handleSave={(item: LoginItemApi) => handleEdit(item)}
         />
       </>

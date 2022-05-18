@@ -51,7 +51,7 @@ export default function Page(): JSX.Element {
   const [ openAddLoginItemFormDialog, setOpenAddLoginItemFormDialog ] = React.useState<boolean>(false)
 
   const classes = useStyles()
-  const { user } = useSession()
+  const { authStatus, getIdToken } = useSession()
   const { enqueueSnackbar } = useSnackbar()
 
   /**
@@ -68,13 +68,13 @@ export default function Page(): JSX.Element {
    */
   React.useEffect(() => {
     const fetchData = async () => {
-      if (!user) return
+      if (authStatus !== 'authenticated') return
 
       setLoading(true)
 
       const response = await fetch('/api/v1.0/logins', {
         headers: {
-          'Authorization': user?.getSignInUserSession()?.getIdToken().getJwtToken() || ''
+          'Authorization': await getIdToken(),
         }
       })
 
@@ -90,7 +90,7 @@ export default function Page(): JSX.Element {
       setLoading(false)
     }
     fetchData()
-  }, [user])
+  }, [authStatus])
 
   /**
    * Hook that updates itemsToShow list, triggered on changes to the allItems list
@@ -130,8 +130,8 @@ export default function Page(): JSX.Element {
     const response = await fetch(`/api/v1.0/${item.type}`, {
       method: 'POST',
       headers: {
-        'Authorization': user?.getSignInUserSession()?.getIdToken().getJwtToken() || '',
-        'Content-Type': 'application/json'
+        'Authorization': await getIdToken(),
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         'data': {

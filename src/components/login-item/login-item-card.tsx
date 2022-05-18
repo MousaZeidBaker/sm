@@ -66,7 +66,7 @@ export default function LoginItemCard(props: Props): JSX.Element {
   const [ loading, setLoading ] = React.useState<boolean>(false)
 
   const classes = useStyles()
-  const { user } = useSession()
+  const { getIdToken } = useSession()
   const { enqueueSnackbar } = useSnackbar()
 
   /**
@@ -91,7 +91,7 @@ export default function LoginItemCard(props: Props): JSX.Element {
     const response = await fetch(`/api/v1.0/${item.type}/${item.id}`, {
       method: 'PATCH',
       headers: {
-        'Authorization': user?.getSignInUserSession()?.getIdToken().getJwtToken() || '',
+        'Authorization': await getIdToken(),
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -130,7 +130,7 @@ export default function LoginItemCard(props: Props): JSX.Element {
     const response = await fetch(`/api/v1.0/${item.type}/${item.id}`, {
       method: 'DELETE',
       headers: {
-        'Authorization': user?.getSignInUserSession()?.getIdToken().getJwtToken() || '',
+        'Authorization': await getIdToken(),
       }
     })
 
@@ -160,7 +160,7 @@ export default function LoginItemCard(props: Props): JSX.Element {
 
     const response = await fetch(`/api/v1.0/logins/${id}?version=${version}`, {
       headers: {
-        'Authorization': user?.getSignInUserSession()?.getIdToken().getJwtToken() || ''
+        'Authorization': await getIdToken(),
       }
     })
 

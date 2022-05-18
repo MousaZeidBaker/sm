@@ -1,6 +1,6 @@
 import type { AppProps } from 'next/app'
 import { Authenticator, useTheme, View, Text } from '@aws-amplify/ui-react'
-import { IdleAlertDialog } from '../components/useSession'
+import { IdleAlertDialog } from '../components/idle-alert-dialog'
 import '@aws-amplify/ui-react/styles.css'
 import React from 'react'
 import { SnackbarProvider } from 'notistack'

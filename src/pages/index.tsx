@@ -1,6 +1,6 @@
 import React from 'react'
 import { Layout } from '../components/layout'
-import useSession from '../components/useSession'
+import useSession from '../hooks/useSession'
 import TextField from '@mui/material/TextField'
 import Accordion from '@mui/material/Accordion'
 import AccordionSummary from '@mui/material/AccordionSummary'

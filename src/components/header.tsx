@@ -3,7 +3,7 @@ import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
-import useSession from '../hooks/useSession'
+import { useAuth } from '../hooks/useAuth'
 import { LogoutIcon } from '../icons/logout_icon'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
@@ -34,7 +34,7 @@ interface Props {
 }
 
 export function Header(props: Props): JSX.Element {
-  const { user, signOut } = useSession()
+  const { user, signOut } = useAuth()
 
   const router = useRouter()
   const themeContext = React.useContext(ThemeContext)

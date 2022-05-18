@@ -14,7 +14,7 @@ Amplify.configure({
 })
 // Amplify.Logger.LOG_LEVEL = 'DEBUG'
 
-export default function useSession() {
+export function useAuth() {
   const { user, authStatus } = useAuthenticator(context => [context.user, context.authStatus])
   const [session, setSession] = React.useState(user.getSignInUserSession())
 

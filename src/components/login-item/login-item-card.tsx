@@ -3,7 +3,7 @@ import { OverflowMenu } from '../../components/overflow-menu'
 import { LoginItemApi } from '../../backend/models/login/login-item-api'
 import { LoginItemDecryptedData } from '../../backend/models/login/login-item'
 import makeStyles from '@mui/styles/makeStyles'
-import useSession from '../../hooks/useSession'
+import { useAuth } from '../../hooks/useAuth'
 import { Theme } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import Grid from '@mui/material/Grid'
@@ -66,7 +66,7 @@ export default function LoginItemCard(props: Props): JSX.Element {
   const [ loading, setLoading ] = React.useState<boolean>(false)
 
   const classes = useStyles()
-  const { getIdToken } = useSession()
+  const { getIdToken } = useAuth()
   const { enqueueSnackbar } = useSnackbar()
 
   /**

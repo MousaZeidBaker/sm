@@ -90,7 +90,7 @@ export default function useSession() {
 }
 
 export function IdleAlertDialog (): JSX.Element {
-  const timeoutSeconds = 300
+  const timeoutSeconds = 240
   const promptTimeoutSeconds = 30
   const progressStep = Math.round(100 / promptTimeoutSeconds)
   const [openAlertDialog, setOpenAlertDialog] = React.useState(false)

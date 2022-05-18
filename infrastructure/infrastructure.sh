@@ -60,8 +60,8 @@ aws cognito-idp create-user-pool-client \
   --client-name "sm_web_client_$RANDOM_ID" \
   --no-generate-secret \
   --refresh-token-validity 60 \
-  --access-token-validity 60 \
-  --id-token-validity 60 \
+  --access-token-validity 5 \
+  --id-token-validity 5 \
   --token-validity-units "AccessToken=minutes,IdToken=minutes,RefreshToken=minutes" \
   --prevent-user-existence-errors "ENABLED" \
   > "$OUTPUT_DIR/response.txt"

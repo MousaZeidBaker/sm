@@ -6,7 +6,7 @@ import { LoginItemApi } from '../backend/models/login/login-item-api'
 import { LoginItemDecryptedData } from '../backend/models/login/login-item'
 import { LoginItemFormDialog } from '../components/login-item/login-item-form-dialog'
 import makeStyles from '@mui/styles/makeStyles'
-import useSession from '../components/useSession'
+import { useAuth } from '../hooks/useAuth'
 import { Theme } from '@mui/material/styles'
 import LinearProgress from '@mui/material/LinearProgress'
 import Grid from '@mui/material/Grid'
@@ -51,7 +51,7 @@ export default function Page(): JSX.Element {
   const [ openAddLoginItemFormDialog, setOpenAddLoginItemFormDialog ] = React.useState<boolean>(false)
 
   const classes = useStyles()
-  const { authStatus, getIdToken } = useSession()
+  const { authStatus, getIdToken } = useAuth()
   const { enqueueSnackbar } = useSnackbar()
 
   /**

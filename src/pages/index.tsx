@@ -1,6 +1,6 @@
 import React from 'react'
 import { Layout } from '../components/layout'
-import useSession from '../components/useSession'
+import { useAuth } from '../hooks/useAuth'
 import TextField from '@mui/material/TextField'
 import Accordion from '@mui/material/Accordion'
 import AccordionSummary from '@mui/material/AccordionSummary'
@@ -39,7 +39,7 @@ export default function Page(): JSX.Element {
 
   const [accordionExpanded, setAccordionExpanded] = React.useState(false)
 
-  const { user, changePassword } = useSession()
+  const { user, changePassword } = useAuth()
   const { enqueueSnackbar } = useSnackbar()
 
   // Determine if save button should be disabled

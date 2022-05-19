@@ -13,7 +13,7 @@ import LockIcon from '@mui/icons-material/Lock'
 import Head from 'next/head'
 
 declare module '@mui/styles/defaultTheme' {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  // eslint-disable-next-line no-unused-vars
   interface DefaultTheme extends Theme {}
 }
 
@@ -46,7 +46,7 @@ function App({ Component, pageProps }: AppProps): JSX.Element {
     return () => {
       setPaletteMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'))
     }
-  }, [paletteMode])
+  }, [])
 
   // Update the theme only if the mode changes
   const theme: Theme = React.useMemo(() => {
@@ -86,7 +86,7 @@ function App({ Component, pageProps }: AppProps): JSX.Element {
   )
 }
 
-export default function (props: AppProps): JSX.Element {
+export default function AppWithAuth(props: AppProps): JSX.Element {
   const amplifyComponents = {
     Header() {
       const { tokens } = useTheme();

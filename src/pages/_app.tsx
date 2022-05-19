@@ -41,7 +41,8 @@ function getItemFromLocalStorage(key: string): string | null {
 }
 
 export const ThemeContext = React.createContext({
-  togglePaletteMode: () => ({}),
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  togglePaletteMode: () => {},
   paletteMode: "light"
 });
 

@@ -1,39 +1,47 @@
-import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
-import { LoginItem } from '../../../../backend/models/login/login-item'
-import { withMiddleware } from '../../../../backend/middlewares'
-import { LoginItemApi } from '../../../../backend/models/login/login-item-api'
-import { logger } from '../../../../backend/lib/logger/logger'
-import { MethodNotAllowedHttpResponse, NotFoundHttpResponse, InternalServerHttpResponse } from '../../../../backend/errors/http-errors'
-import { LoginItemParameterStoreRepository } from '../../../../backend/repositories/login/login-item-parameter-store-repository'
-import { LoginItemRepository } from '../../../../backend/repositories/login/login-item-repository'
+import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 
-let repo: LoginItemRepository
+import {
+  InternalServerHttpResponse,
+  MethodNotAllowedHttpResponse,
+  NotFoundHttpResponse
+} from "../../../../backend/errors/http-errors";
+import { logger } from "../../../../backend/lib/logger/logger";
+import { withMiddleware } from "../../../../backend/middlewares";
+import { LoginItem } from "../../../../backend/models/login/login-item";
+import { LoginItemApi } from "../../../../backend/models/login/login-item-api";
+import { LoginItemParameterStoreRepository } from "../../../../backend/repositories/login/login-item-parameter-store-repository";
+import { LoginItemRepository } from "../../../../backend/repositories/login/login-item-repository";
+
+let repo: LoginItemRepository;
 
 /**
  * Process a GET request
- * 
+ *
  * @param {NextApiRequest} req - The Next `API` route request
  * @param {NextApiResponse} res - The Next `API` route response
  * @return {Promise<void>}
  */
-async function getRequest (req: NextApiRequest, res: NextApiResponse): Promise<void> {
-  const id = req.query.id as string
-  const version = parseInt(req.query.version as string)
+async function getRequest(
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void> {
+  const id = req.query.id as string;
+  const version = parseInt(req.query.version as string);
 
-  let item: LoginItem
+  let item: LoginItem;
   try {
-    item = await repo.get(id, version)
+    item = await repo.get(id, version);
   } catch (err: any) {
-    logger.info('Failed to get login item:', [ err ])
+    logger.info("Failed to get login item:", [err]);
 
-    switch(err.name) {
-      case 'NotFoundException': {
-        res.status(404).json(NotFoundHttpResponse)
-        return
+    switch (err.name) {
+      case "NotFoundException": {
+        res.status(404).json(NotFoundHttpResponse);
+        return;
       }
       default: {
-        res.status(500).json(InternalServerHttpResponse)
-        return
+        res.status(500).json(InternalServerHttpResponse);
+        return;
       }
     }
   }
@@ -41,28 +49,31 @@ async function getRequest (req: NextApiRequest, res: NextApiResponse): Promise<v
   const response: { data: LoginItemApi } = {
     data: {
       id: item.id,
-      type: 'logins',
+      type: "logins",
       attributes: {
         version: item.version,
         lastModifiedDate: item.lastModifiedDate,
         ...item.getDecryptedData()
       }
     }
-  }
-  res.status(200).json(response)
+  };
+  res.status(200).json(response);
 }
 
 /**
  * Process a PATCH request
- * 
+ *
  * @param {NextApiRequest} req - The Next `API` route request
  * @param {NextApiResponse} res - The Next `API` route response
  * @return {Promise<void>}
  */
-async function patchRequest (req: NextApiRequest, res: NextApiResponse): Promise<void> {
-  const id = req.query.id as string
+async function patchRequest(
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void> {
+  const id = req.query.id as string;
 
-  let item: LoginItem
+  let item: LoginItem;
   try {
     item = await repo.update(
       id,
@@ -71,18 +82,18 @@ async function patchRequest (req: NextApiRequest, res: NextApiResponse): Promise
       req.body?.data?.attributes?.username,
       req.body?.data?.attributes?.secret,
       req?.body?.data?.attributes.note
-    )
+    );
   } catch (err: any) {
-    logger.info('Failed to update login item:', [ err ])
+    logger.info("Failed to update login item:", [err]);
 
-    switch(err.name) {
-      case 'NotFoundException': {
-        res.status(404).json(NotFoundHttpResponse)
-        return
+    switch (err.name) {
+      case "NotFoundException": {
+        res.status(404).json(NotFoundHttpResponse);
+        return;
       }
       default: {
-        res.status(500).json(InternalServerHttpResponse)
-        return
+        res.status(500).json(InternalServerHttpResponse);
+        return;
       }
     }
   }
@@ -90,76 +101,84 @@ async function patchRequest (req: NextApiRequest, res: NextApiResponse): Promise
   const response: { data: LoginItemApi } = {
     data: {
       id: item.id,
-      type: 'logins',
+      type: "logins",
       attributes: {
         version: item.version,
         lastModifiedDate: item.lastModifiedDate,
         ...item.getDecryptedData()
       }
     }
-  }
-  res.status(200).json(response)
+  };
+  res.status(200).json(response);
 }
 
 /**
  * Process a DELETE request
- * 
+ *
  * @param {NextApiRequest} req - The Next `API` route request
  * @param {NextApiResponse} res - The Next `API` route response
  * @return {Promise<void>}
  */
-async function deleteRequest (req: NextApiRequest, res: NextApiResponse): Promise<void> {
-  const id = req.query.id as string
+async function deleteRequest(
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void> {
+  const id = req.query.id as string;
 
   try {
-    await repo.delete(id)
+    await repo.delete(id);
   } catch (err: any) {
-    logger.info('Failed to delete login item:', [ err ])
+    logger.info("Failed to delete login item:", [err]);
 
-    switch(err.name) {
-      case 'NotFoundException': {
-        res.status(404).json(NotFoundHttpResponse)
-        return
+    switch (err.name) {
+      case "NotFoundException": {
+        res.status(404).json(NotFoundHttpResponse);
+        return;
       }
       default: {
-        res.status(500).json(InternalServerHttpResponse)
-        return
+        res.status(500).json(InternalServerHttpResponse);
+        return;
       }
     }
   }
 
-  res.status(204).send('')
+  res.status(204).send("");
 }
 
 /**
  * API route handler
- * 
+ *
  * @param {NextApiRequest} req - The Next `API` route request
  * @param {NextApiResponse} res - The Next `API` route response
  * @return {Promise<void>}
  */
-const handler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
-  repo = await LoginItemParameterStoreRepository.build(req.headers.authorization || '')
+const handler: NextApiHandler = async (
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void> => {
+  repo = await LoginItemParameterStoreRepository.build(
+    req.headers.authorization || ""
+  );
 
-  switch(req.method) {
-    case 'GET': {
-      await getRequest(req, res)
-      return
+  switch (req.method) {
+    case "GET": {
+      await getRequest(req, res);
+      return;
     }
-    case 'PATCH': {
-      await patchRequest(req, res)
-      return
+    case "PATCH": {
+      await patchRequest(req, res);
+      return;
     }
-    case 'DELETE': {
-      await deleteRequest(req, res)
-      return
+    case "DELETE": {
+      await deleteRequest(req, res);
+      return;
     }
     default: {
-      res.setHeader('Allow', ['GET', 'PATCH', 'DELETE'])
-      res.status(415).json(MethodNotAllowedHttpResponse)
-      return
+      res.setHeader("Allow", ["GET", "PATCH", "DELETE"]);
+      res.status(415).json(MethodNotAllowedHttpResponse);
+      return;
     }
   }
-}
+};
 
-export default withMiddleware(handler)
+export default withMiddleware(handler);

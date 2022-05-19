@@ -1,15 +1,16 @@
-import SSM from 'aws-sdk/clients/ssm'
-import { logger } from '../../logger/logger'
+import SSM from "aws-sdk/clients/ssm";
+
+import { logger } from "../../logger/logger";
 
 /**
- * @param {SSM} ssmClient - The AWS SSM service client 
+ * @param {SSM} ssmClient - The AWS SSM service client
  * @param {string} name - The complete hierarchy of the parameter
  * @param {string} value - The parameter value
  * @param {SSM.Tag[]} tags - Metadata tags to assign to the parameter
  * @param {boolean} overwrite - Indicates if an an existing parameter should be overwritten
  * @return {Promise<SSM.Types.PutParameterResult>}
  */
-async function putParameter (
+async function putParameter(
   ssmClient: SSM,
   name: string,
   value: string,
@@ -20,21 +21,21 @@ async function putParameter (
   const params: SSM.Types.PutParameterRequest = {
     Name: name,
     Value: value,
-    Type: 'String',
+    Type: "String",
     Overwrite: overwrite,
     Tags: tags
-  }
-  logger.info('Parameter Store PutParameter Request:', { params })
+  };
+  logger.info("Parameter Store PutParameter Request:", { params });
 
   // Response
-  const response = await ssmClient.putParameter(params).promise()
-  logger.info('Parameter Store response:', { response })
+  const response = await ssmClient.putParameter(params).promise();
+  logger.info("Parameter Store response:", { response });
 
-  return response
+  return response;
 }
 
 /**
- * @param {SSM} ssmClient - The AWS SSM service client 
+ * @param {SSM} ssmClient - The AWS SSM service client
  * @param {string} name - The complete hierarchy of the parameter
  * @param {string} value - The parameter value
  * @param {SSM.Tag[]} tags - Metadata tags to assign to the parameter
@@ -46,11 +47,11 @@ export const createParameter = async (
   value: string,
   tags: SSM.Tag[]
 ): Promise<SSM.PutParameterResult> => {
-  return await putParameter(ssmClient, name, value, tags, false)
-}
+  return await putParameter(ssmClient, name, value, tags, false);
+};
 
 /**
- * @param {SSM} ssmClient - The AWS SSM service client 
+ * @param {SSM} ssmClient - The AWS SSM service client
  * @param {string} name - The complete hierarchy of the parameter
  * @param {string} value - The new parameter value
  * @return {Promise<SSM.Types.PutParameterResult>}
@@ -58,7 +59,7 @@ export const createParameter = async (
 export const updateParameter = async (
   ssmClient: SSM,
   name: string,
-  value: string,
+  value: string
 ): Promise<SSM.PutParameterResult> => {
-  return await putParameter(ssmClient, name, value, [], true)
-}
+  return await putParameter(ssmClient, name, value, [], true);
+};

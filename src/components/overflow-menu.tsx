@@ -1,48 +1,50 @@
-import React from 'react'
-import Button from '@mui/material/Button'
-import Menu from '@mui/material/Menu'
-import MoreVertIcon from '@mui/icons-material/MoreVert'
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import Button from "@mui/material/Button";
+import Menu from "@mui/material/Menu";
+import React from "react";
 
 interface Props {
-  open: boolean
-  setOpen: (open: boolean) => void
-  menuItems: Array<JSX.Element>
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  menuItems: Array<JSX.Element>;
 }
 
 export function OverflowMenu(props: Props): JSX.Element {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   /**
    * Handles menu click event
-   * 
+   *
    * @param {React.MouseEvent<HTMLButtonElement>} event
    * @return {void}
    */
-  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
-    setAnchorEl(event.currentTarget)
-    props.setOpen(true)
-  }
+  const handleMenuClick = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ): void => {
+    setAnchorEl(event.currentTarget);
+    props.setOpen(true);
+  };
 
   /**
    * Handles menu close event
-   * 
+   *
    * @return {void}
    */
   const handleMenuClose = (): void => {
-    setAnchorEl(null)
-    props.setOpen(false)
-  }
+    setAnchorEl(null);
+    props.setOpen(false);
+  };
 
   return (
     <>
       {/* Overflow menu that opens over the anchor element */}
       <Button
-        aria-controls='overflow-menu'
-        aria-haspopup='true'
-        title='Menu'
+        aria-controls="overflow-menu"
+        aria-haspopup="true"
+        title="Menu"
         onClick={handleMenuClick}
-        >
-        <MoreVertIcon/>
+      >
+        <MoreVertIcon />
       </Button>
       <Menu
         anchorEl={anchorEl}
@@ -53,5 +55,5 @@ export function OverflowMenu(props: Props): JSX.Element {
         {props.menuItems}
       </Menu>
     </>
-  )
+  );
 }

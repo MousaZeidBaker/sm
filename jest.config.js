@@ -1,15 +1,11 @@
 module.exports = {
-  "roots": [
-    "<rootDir>/src"
-  ],
-  "testMatch": [
+  roots: ["<rootDir>/src"],
+  testMatch: [
     "**/__tests__/**/*.+(ts|tsx|js)",
     "**/?(*.)+(spec|test).+(ts|tsx|js)"
   ],
-  "transform": {
+  transform: {
     "^.+\\.(ts|tsx)$": "ts-jest"
   },
-  "testPathIgnorePatterns": [
-    "<rootDir>/src/backend/__tests__/utils/"
-  ]
-}
+  testPathIgnorePatterns: ["<rootDir>/src/backend/__tests__/utils/"]
+};

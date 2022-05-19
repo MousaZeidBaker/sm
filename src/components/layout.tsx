@@ -1,23 +1,24 @@
-import { Header } from './header'
-import React from 'react'
-import makeStyles from '@mui/styles/makeStyles'
+import makeStyles from "@mui/styles/makeStyles";
+import React from "react";
+
+import { Header } from "./header";
 
 const useStyles = makeStyles({
   main: {
-    marginTop: '1%',
-    marginLeft: '10%',
-    marginRight: '10%'
+    marginTop: "1%",
+    marginLeft: "10%",
+    marginRight: "10%"
   }
-})
+});
 
 interface Props {
-  children: React.ReactNode,
-  showSearchBar: boolean
-  handleSearchChange: (pattern: string) => void
+  children: React.ReactNode;
+  showSearchBar: boolean;
+  handleSearchChange: (pattern: string) => void;
 }
 
-export function Layout (props: Props): JSX.Element {
-  const classes = useStyles()
+export function Layout(props: Props): JSX.Element {
+  const classes = useStyles();
 
   return (
     <>
@@ -25,9 +26,7 @@ export function Layout (props: Props): JSX.Element {
         showSearchBar={props.showSearchBar}
         handleSearchChange={props.handleSearchChange}
       />
-      <main className={classes.main}>
-        {props.children}
-      </main>
+      <main className={classes.main}>{props.children}</main>
     </>
-  )
+  );
 }

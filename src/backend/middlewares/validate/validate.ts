@@ -4,7 +4,8 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { logger } from "../../lib/logger/logger";
 
 const stringPattern = new RegExp(
-  /^[a-zA-Z0-9!#$%&'()*+,-./:;<=>?@[\\\]_`{}~]{1,50}$/m
+  // eslint-disable-next-line no-useless-escape
+  /^[a-zA-Z0-9!\"#$%&'()*+,-./:;<=>?@[\\\]\^_`{\|}~]{1,50}$/m
 );
 
 /**

@@ -107,7 +107,8 @@ export function LoginItemFormDialog(props: Props): JSX.Element {
     value: string
   ): void => {
     const pattern = new RegExp(
-      /^[a-zA-Z0-9!#$%&'()*+,-./:;<=>?@[\\\]_`{}~]{1,50}$/gm
+      // eslint-disable-next-line no-useless-escape
+      /^[a-zA-Z0-9!\"#$%&'()*+,-./:;<=>?@[\\\]\^_`{\|}~]{1,50}$/gm
     );
     switch (key) {
       case "title": {

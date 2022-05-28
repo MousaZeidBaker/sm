@@ -14,12 +14,25 @@ import {
 import { PaletteMode } from "@mui/material";
 import { pink } from "@mui/material/colors";
 import Typography from "@mui/material/Typography";
+import { Amplify } from "aws-amplify";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { SnackbarProvider } from "notistack";
 import React from "react";
 
 import { IdleAlertDialog } from "../components/idle-alert-dialog";
+
+Amplify.configure({
+  ssr: true,
+  aws_project_region: process.env.NEXT_PUBLIC_APP_AWS_REGION,
+  aws_cognito_identity_pool_id: process.env.NEXT_PUBLIC_APP_IDENTITY_POOL_ID,
+  aws_cognito_region: process.env.NEXT_PUBLIC_APP_AWS_REGION,
+  aws_user_pools_id: process.env.NEXT_PUBLIC_APP_USER_POOL_ID,
+  aws_user_pools_web_client_id:
+    process.env.NEXT_PUBLIC_APP_USER_POOL_WEB_CLIENT_ID,
+  oauth: {}
+});
+// Amplify.Logger.LOG_LEVEL = 'DEBUG'
 
 declare module "@mui/styles/defaultTheme" {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface

@@ -1,19 +1,7 @@
 import { HubCallback } from "@aws-amplify/core/lib/Hub";
 import { useAuthenticator } from "@aws-amplify/ui-react";
-import { Amplify, Auth, Hub } from "aws-amplify";
+import { Auth, Hub } from "aws-amplify";
 import React from "react";
-
-Amplify.configure({
-  ssr: true,
-  aws_project_region: process.env.NEXT_PUBLIC_APP_AWS_REGION,
-  aws_cognito_identity_pool_id: process.env.NEXT_PUBLIC_APP_IDENTITY_POOL_ID,
-  aws_cognito_region: process.env.NEXT_PUBLIC_APP_AWS_REGION,
-  aws_user_pools_id: process.env.NEXT_PUBLIC_APP_USER_POOL_ID,
-  aws_user_pools_web_client_id:
-    process.env.NEXT_PUBLIC_APP_USER_POOL_WEB_CLIENT_ID,
-  oauth: {}
-});
-// Amplify.Logger.LOG_LEVEL = 'DEBUG'
 
 export function useAuth() {
   const { user, authStatus } = useAuthenticator((context) => [

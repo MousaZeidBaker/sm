@@ -35,7 +35,7 @@ function getSchema(req: NextApiRequest): Schema {
   const url = new URL(req.url as string, "http://example.com");
 
   switch (true) {
-    case url.pathname === "/api/v1.0/logins": {
+    case url.pathname === "/api/v1/logins": {
       switch (req.method) {
         case "POST": {
           return Joi.object({
@@ -50,7 +50,7 @@ function getSchema(req: NextApiRequest): Schema {
         }
       }
     }
-    case url.pathname.startsWith("/api/v1.0/logins/"): {
+    case url.pathname.startsWith("/api/v1/logins/"): {
       switch (req.method) {
         case "PATCH": {
           return Joi.object({

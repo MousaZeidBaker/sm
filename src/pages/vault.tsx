@@ -74,7 +74,7 @@ export default function Page(): JSX.Element {
 
       setLoading(true);
 
-      const response = await fetch("/api/v1.0/logins", {
+      const response = await fetch("/api/v1/logins", {
         headers: {
           Authorization: await getIdToken()
         }
@@ -129,7 +129,7 @@ export default function Page(): JSX.Element {
       secret: item.attributes.secret,
       note: item.attributes.note
     };
-    const response = await fetch(`/api/v1.0/${item.type}`, {
+    const response = await fetch(`/api/v1/${item.type}`, {
       method: "POST",
       headers: {
         Authorization: await getIdToken(),

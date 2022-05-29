@@ -148,7 +148,7 @@ TOKEN=$MY_SM_TOKEN # set token as environment variable
 
 while IFS="," read -r url username password totp extra name grouping fav
 do
-  curl "https://sm.vercel.app/api/v1.0/logins" \
+  curl "https://sm.vercel.app/api/v1/logins" \
   -H "content-type: application/json" \
   -H "authorization: $TOKEN" \
   --data-raw "{\"data\":{\"type\":\"logins\",\"attributes\":{\"title\":\"$name\",\"path\":\"/\",\"username\":\"$username\",\"secret\":\"$password\",\"note\":\"$name\"}}}"

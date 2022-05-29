@@ -89,7 +89,7 @@ export default function LoginItemCard(props: Props): JSX.Element {
       secret: item.attributes.secret,
       note: item.attributes.note
     };
-    const response = await fetch(`/api/v1.0/${item.type}/${item.id}`, {
+    const response = await fetch(`/api/v1/${item.type}/${item.id}`, {
       method: "PATCH",
       headers: {
         Authorization: await getIdToken(),
@@ -128,7 +128,7 @@ export default function LoginItemCard(props: Props): JSX.Element {
     enqueueSnackbar("Deleting item...", { variant: "info" });
 
     // API request to delete item
-    const response = await fetch(`/api/v1.0/${item.type}/${item.id}`, {
+    const response = await fetch(`/api/v1/${item.type}/${item.id}`, {
       method: "DELETE",
       headers: {
         Authorization: await getIdToken()
@@ -162,7 +162,7 @@ export default function LoginItemCard(props: Props): JSX.Element {
   ): Promise<void> => {
     setLoading(true);
 
-    const response = await fetch(`/api/v1.0/logins/${id}?version=${version}`, {
+    const response = await fetch(`/api/v1/logins/${id}?version=${version}`, {
       headers: {
         Authorization: await getIdToken()
       }

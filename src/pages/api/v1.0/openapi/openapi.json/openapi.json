@@ -1,0 +1,47 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "SecretsManager",
+        "description": "SecretsManager OpenAPI specification",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/api/v1.0"
+        }
+    ],
+    "security": [
+        {
+          "CognitoUserPool": []
+        }
+    ],
+    "paths": {
+        "/logins": {
+            "$ref": "./logins.json#/paths/~1logins"
+        },
+        "/logins/{id}": {
+            "$ref": "./logins.json#/paths/~1logins~1{id}"
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "CognitoUserPool": {
+                "type": "apiKey",
+                "name": "Authorization",
+                "in": "header",
+                "x-amazon-apigateway-authtype": "cognito_user_pools",
+                "x-amazon-apigateway-authorizer": {
+                  "type": "cognito_user_pools",
+                  "providerARNs": [
+                    "arn:aws:cognito-idp:{region}:{account_id}:userpool/{user_pool_id}"
+                  ]
+                }
+            }
+        },
+        "schemas": {
+            "LoginModel": {
+                "$ref": "./logins.json#/components/schemas/LoginModel"
+            }
+        }
+    }
+}

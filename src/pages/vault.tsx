@@ -160,10 +160,12 @@ export default function Page(): JSX.Element {
     // get file content
     const fileReader = new FileReader();
     fileReader.readAsText(file, "UTF-8");
-    fileReader.onload = (e: ProgressEvent<FileReader>) => {
+    fileReader.onload = async (e: ProgressEvent<FileReader>) => {
       const content = JSON.parse(e?.target?.result as string);
       for (const item of content.data) {
         handleAdd(item);
+        // sleep in order to avoid TooManyRequestsException
+        await new Promise((resolve) => setTimeout(resolve, 500));
       }
     };
 

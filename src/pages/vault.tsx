@@ -129,7 +129,7 @@ export default function Page(): JSX.Element {
    */
   const handleFabExport = (): void => {
     const data = `data:text/json;chatset=utf-8,${encodeURIComponent(
-      JSON.stringify(allItems, null, "\t")
+      JSON.stringify({ data: allItems }, null, "\t")
     )}`;
 
     const link = document.createElement("a");
@@ -153,16 +153,15 @@ export default function Page(): JSX.Element {
    * @return {void}
    */
   const handleFileInput = (e: ChangeEvent<HTMLInputElement>): void => {
-    if (e?.target?.files == null) return;
-    const file = e?.target?.files[0];
+    if (!e?.target?.files) return;
+    const file = e.target.files[0];
 
     // get file content
     const fileReader = new FileReader();
     fileReader.readAsText(file, "UTF-8");
     fileReader.onload = (e: ProgressEvent<FileReader>) => {
-      const content = (e?.target?.result as string) || "";
-      const data = JSON.parse(content);
-      for (const item of data) {
+      const content = JSON.parse(e?.target?.result as string);
+      for (const item of content.data) {
         handleAdd(item);
       }
     };

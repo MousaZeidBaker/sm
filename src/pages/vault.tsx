@@ -163,9 +163,7 @@ export default function Page(): JSX.Element {
     fileReader.onload = async (e: ProgressEvent<FileReader>) => {
       const content = JSON.parse(e?.target?.result as string);
       for (const item of content.data) {
-        handleAdd(item);
-        // sleep in order to avoid TooManyRequestsException
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        await handleAdd(item);
       }
     };
 

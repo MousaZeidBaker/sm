@@ -1,14 +1,18 @@
 import AddIcon from "@mui/icons-material/Add";
-import Fab from "@mui/material/Fab";
+import DownloadIcon from "@mui/icons-material/Download";
+import UploadIcon from "@mui/icons-material/Upload";
 import Grid from "@mui/material/Grid";
 import LinearProgress from "@mui/material/LinearProgress";
+import SpeedDial from "@mui/material/SpeedDial";
+import SpeedDialAction from "@mui/material/SpeedDialAction";
+import SpeedDialIcon from "@mui/material/SpeedDialIcon";
+import { alpha } from "@mui/material/styles";
 import { Theme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import Fuse from "fuse.js";
 import { useSnackbar } from "notistack";
-import React from "react";
+import React, { ChangeEvent } from "react";
 
-import { LoginItemDecryptedData } from "../backend/models/login/login-item";
 import { LoginItemApi } from "../backend/models/login/login-item-api";
 import { Layout } from "../components/layout";
 import LoginItemCard from "../components/login-item/login-item-card";
@@ -22,10 +26,17 @@ const useStyles = makeStyles((theme: Theme) => ({
   dataGrid: {
     border: 0
   },
-  fab: {
-    position: "fixed",
+  speedDial: {
+    position: "absolute",
+    color: theme.palette.primary.main,
     bottom: theme.spacing(2),
     right: theme.spacing(2)
+  },
+  speedDialAction: {
+    backgroundColor: alpha(theme.palette.common.white, 0.1),
+    "&:hover": {
+      backgroundColor: alpha(theme.palette.action.hover, 0.25)
+    }
   },
   gridOverlay: {
     position: "absolute",
@@ -56,6 +67,8 @@ export default function Page(): JSX.Element {
   const { authStatus, getIdToken } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
 
+  const fileInput = React.useRef<HTMLInputElement>(null);
+
   /**
    * Configure Fuse. Fuse is used for fuzzy-searching
    */
@@ -84,7 +97,6 @@ export default function Page(): JSX.Element {
         const jsonResponse = await response.json();
 
         setAllItems([...jsonResponse.data]);
-        setItemsToShow([...jsonResponse.data]);
       } else {
         enqueueSnackbar("Error! Couldn't load items.", { variant: "error" });
       }
@@ -102,12 +114,61 @@ export default function Page(): JSX.Element {
   }, [allItems]);
 
   /**
-   * Handles Fab click event
+   * Handles Fab add event
    *
    * @return {void}
    */
-  const handleFabClick = (): void => {
+  const handleFabAdd = (): void => {
     setOpenAddLoginItemFormDialog(true);
+  };
+
+  /**
+   * Handles Fab export event
+   *
+   * @return {void}
+   */
+  const handleFabExport = (): void => {
+    const data = `data:text/json;chatset=utf-8,${encodeURIComponent(
+      JSON.stringify(allItems, null, "\t")
+    )}`;
+
+    const link = document.createElement("a");
+    link.download = "data.json";
+    link.href = data;
+    link.click();
+  };
+
+  /**
+   * Handles Fab import event
+   *
+   * @return {void}
+   */
+  const handleFabImport = (): void => {
+    fileInput.current?.click();
+  };
+
+  /**
+   * Handles file input event
+   *
+   * @return {void}
+   */
+  const handleFileInput = (e: ChangeEvent<HTMLInputElement>): void => {
+    if (e?.target?.files == null) return;
+    const file = e?.target?.files[0];
+
+    // get file content
+    const fileReader = new FileReader();
+    fileReader.readAsText(file, "UTF-8");
+    fileReader.onload = (e: ProgressEvent<FileReader>) => {
+      const content = (e?.target?.result as string) || "";
+      const data = JSON.parse(content);
+      for (const item of data) {
+        handleAdd(item);
+      }
+    };
+
+    // reset reference for future triggers
+    if (fileInput.current != undefined) fileInput.current.value = "";
   };
 
   /**
@@ -122,13 +183,6 @@ export default function Page(): JSX.Element {
     enqueueSnackbar("Adding item...", { variant: "info" });
 
     // API request to add new login item
-    const attributes: LoginItemDecryptedData = {
-      title: item.attributes.title,
-      path: item.attributes.path,
-      username: item.attributes.username,
-      secret: item.attributes.secret,
-      note: item.attributes.note
-    };
     const response = await fetch(`/api/v1/${item.type}`, {
       method: "POST",
       headers: {
@@ -138,7 +192,13 @@ export default function Page(): JSX.Element {
       body: JSON.stringify({
         data: {
           type: item.type,
-          attributes: attributes
+          attributes: {
+            title: item.attributes.title,
+            path: item.attributes.path,
+            username: item.attributes.username,
+            secret: item.attributes.secret,
+            note: item.attributes.note
+          }
         }
       })
     });
@@ -147,7 +207,9 @@ export default function Page(): JSX.Element {
       const jsonResponse = await response.json();
 
       const addedItem = jsonResponse.data;
-      setAllItems([...allItems, addedItem]);
+      setAllItems((prevState) => {
+        return [...prevState, addedItem];
+      });
       enqueueSnackbar("Success! Item added.", { variant: "success" });
     } else {
       enqueueSnackbar("Error! Couldn't add item.", { variant: "error" });
@@ -194,12 +256,6 @@ export default function Page(): JSX.Element {
     }
   };
 
-  itemsToShow.map(
-    (item: LoginItemApi): JSX.Element => (
-      <LoginItemCard key={item.id} item={item} handleDelete={handleDelete} />
-    )
-  );
-
   return (
     <Layout showSearchBar={true} handleSearchChange={handleSearchChange}>
       {/* Progress bars */}
@@ -229,15 +285,42 @@ export default function Page(): JSX.Element {
         )}
       </Grid>
       <div>
-        {/* A floating action button */}
-        <Fab
-          className={classes.fab}
-          color="primary"
-          aria-label="add"
-          onClick={handleFabClick}
+        {/* A speed dial button */}
+        <SpeedDial
+          className={classes.speedDial}
+          ariaLabel="speedDial"
+          icon={<SpeedDialIcon />}
         >
-          <AddIcon />
-        </Fab>
+          <SpeedDialAction
+            className={classes.speedDialAction}
+            key="add"
+            icon={<AddIcon />}
+            tooltipTitle="Add"
+            onClick={() => handleFabAdd()}
+            open={true}
+          />
+          <SpeedDialAction
+            className={classes.speedDialAction}
+            key="export"
+            icon={<DownloadIcon />}
+            tooltipTitle="Export"
+            onClick={() => handleFabExport()}
+          />
+          <SpeedDialAction
+            className={classes.speedDialAction}
+            key="import"
+            icon={<UploadIcon />}
+            tooltipTitle="Import"
+            onClick={() => handleFabImport()}
+          />
+        </SpeedDial>
+        <input
+          ref={fileInput}
+          accept=".json"
+          type="file"
+          style={{ display: "none" }}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => handleFileInput(e)}
+        />
       </div>
       <div>
         {/* An input form for adding items */}

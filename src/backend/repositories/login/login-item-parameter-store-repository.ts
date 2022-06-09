@@ -39,6 +39,7 @@ export class LoginItemParameterStoreRepository implements LoginItemRepository {
     path: string,
     username: string,
     secret: string,
+    otp: string,
     note: string
   ): Promise<LoginItem> {
     const encryptedData = LoginItem.encryptData({
@@ -46,6 +47,7 @@ export class LoginItemParameterStoreRepository implements LoginItemRepository {
       path: path,
       username: username,
       secret: secret,
+      otp: otp,
       note: note
     });
 
@@ -131,6 +133,7 @@ export class LoginItemParameterStoreRepository implements LoginItemRepository {
     path?: string,
     username?: string,
     secret?: string,
+    otp?: string,
     note?: string
   ): Promise<LoginItem> {
     const oldItem = await this.get(id);
@@ -140,6 +143,7 @@ export class LoginItemParameterStoreRepository implements LoginItemRepository {
       path: path || "",
       username: username || "",
       secret: secret || "",
+      otp: otp || "",
       note: note || ""
     });
 

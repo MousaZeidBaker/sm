@@ -81,6 +81,7 @@ async function patchRequest(
       req.body?.data?.attributes?.path,
       req.body?.data?.attributes?.username,
       req.body?.data?.attributes?.secret,
+      req.body?.data?.attributes?.otp,
       req?.body?.data?.attributes.note
     );
   } catch (err: any) {

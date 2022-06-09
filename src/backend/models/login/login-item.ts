@@ -6,6 +6,7 @@ export interface LoginItemDecryptedData {
   path: string;
   username: string;
   secret: string;
+  otp: string;
   note: string;
 }
 

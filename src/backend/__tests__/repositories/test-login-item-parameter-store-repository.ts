@@ -32,6 +32,7 @@ const parameterValues: LoginItemDecryptedData[] = [
     path: "myPath",
     username: "myUsername",
     secret: "mySecret",
+    otp: "myOTP",
     note: "myNote"
   },
   {
@@ -39,6 +40,7 @@ const parameterValues: LoginItemDecryptedData[] = [
     path: "myPath2",
     username: "myUsername2",
     secret: "mySecret2",
+    otp: "myOTP2",
     note: "myNote2"
   }
 ];
@@ -160,6 +162,7 @@ describe("login item ParameterStore repository", () => {
       parameterValue.path,
       parameterValue.username,
       parameterValue.secret,
+      parameterValue.otp,
       parameterValue.note
     );
 
@@ -301,11 +304,12 @@ describe("login item ParameterStore repository", () => {
     const parameter = parameters[0];
     const id = getIdFromParameter(parameter);
 
-    const newParameterValue = {
+    const newParameterValue: LoginItemDecryptedData = {
       title: "newTitle",
       path: "newPath",
       username: "newUsername",
       secret: "newSecret",
+      otp: "newOTP",
       note: "newNote"
     };
 
@@ -315,6 +319,7 @@ describe("login item ParameterStore repository", () => {
       newParameterValue.path,
       newParameterValue.username,
       newParameterValue.secret,
+      newParameterValue.otp,
       newParameterValue.note
     );
 
@@ -353,6 +358,7 @@ describe("login item ParameterStore repository", () => {
       parameterValue.path,
       parameterValue.username,
       parameterValue.secret,
+      parameterValue.otp,
       parameterValue.note
     );
 

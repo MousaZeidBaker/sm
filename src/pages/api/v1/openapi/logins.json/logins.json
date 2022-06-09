@@ -154,6 +154,10 @@
                         "type": "string",
                         "example": "one234"
                     },
+                    "otp": {
+                        "type": "string",
+                        "example": "oneTimePassword"
+                    },
                     "note": {
                         "type": "string",
                         "example": "This is my item"

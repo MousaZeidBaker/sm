@@ -16,14 +16,16 @@ export declare class LoginItemRepository {
    * @param {string} path
    * @param {string} username
    * @param {string} secret
+   * @param {string} otp
    * @return {Promise<LoginItem>}
    */
   create(
-    title?: string,
-    path?: string,
-    username?: string,
-    secret?: string,
-    note?: string
+    title: string,
+    path: string,
+    username: string,
+    secret: string,
+    otp: string,
+    note: string
   ): Promise<LoginItem>;
 
   /**
@@ -50,6 +52,7 @@ export declare class LoginItemRepository {
    * @param {string} path
    * @param {string} username
    * @param {string} secret
+   * @param {string} otp
    * @return {Promise<LoginItem>}
    */
   update(
@@ -58,6 +61,7 @@ export declare class LoginItemRepository {
     path?: string,
     username?: string,
     secret?: string,
+    otp?: string,
     note?: string
   ): Promise<LoginItem>;
 

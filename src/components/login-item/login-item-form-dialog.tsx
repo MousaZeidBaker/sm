@@ -24,6 +24,7 @@ export interface LoginItemFormValues {
   path: string;
   username: string;
   secret: string;
+  otp: string;
   note: string;
 }
 
@@ -45,6 +46,8 @@ export function LoginItemFormDialog(props: Props): JSX.Element {
     React.useState<boolean>(false);
   const [secretTextFieldError, setSecretTextFieldError] =
     React.useState<boolean>(false);
+  const [otpTextFieldError, setOtpTextFieldError] =
+    React.useState<boolean>(false);
   const [noteTextFieldError, setNoteTextFieldError] =
     React.useState<boolean>(false);
   const [disableSaveButton, setDisableSaveButton] =
@@ -62,14 +65,16 @@ export function LoginItemFormDialog(props: Props): JSX.Element {
         titleTextFieldError ||
         usernameTextFieldError ||
         secretTextFieldError ||
+        otpTextFieldError ||
         noteTextFieldError
       )
         disable = true;
 
-      // Disable button if one of the fields are empty
-      Object.values(formValues).forEach((value) => {
-        if (value === "") disable = true;
-      });
+      // Disable button if one of the required fields are empty
+      const requiredFields = ["title, username", "secret"];
+      for (const [key, value] of Object.entries(formValues)) {
+        if (value === "" && requiredFields.includes(key)) disable = true;
+      }
 
       setDisableSaveButton(disable);
     };
@@ -91,6 +96,7 @@ export function LoginItemFormDialog(props: Props): JSX.Element {
     setTitleTextFieldError(false);
     setUsernameTextFieldError(false);
     setSecretTextFieldError(false);
+    setOtpTextFieldError(false);
     setNoteTextFieldError(false);
   };
 
@@ -108,39 +114,50 @@ export function LoginItemFormDialog(props: Props): JSX.Element {
   ): void => {
     const pattern = new RegExp(
       // eslint-disable-next-line no-useless-escape
-      /^[a-zA-Z0-9!\"#$%&'()*+,-./:;<=>?@[\\\]\^_`{\|}~]{1,50}$/gm
+      /^[a-zA-Z0-9!\"#$%&'()*+,-./:;<=>?@[\\\]\^_`{\|}~]*$/gm
     );
     switch (key) {
       case "title": {
-        if (value?.match(pattern)) {
-          setTitleTextFieldError(false);
-        } else {
-          setTitleTextFieldError(true);
+        let error = false;
+        if (!value?.match(pattern) || value.length < 1 || value.length > 50) {
+          error = true;
         }
+        setTitleTextFieldError(error);
         return;
       }
       case "username": {
-        if (value?.match(pattern)) {
-          setUsernameTextFieldError(false);
-        } else {
-          setUsernameTextFieldError(true);
+        let error = false;
+        if (!value?.match(pattern) || value.length < 1 || value.length > 50) {
+          error = true;
         }
+        setUsernameTextFieldError(error);
         return;
       }
       case "secret": {
-        if (value?.match(pattern)) {
-          setSecretTextFieldError(false);
-        } else {
-          setSecretTextFieldError(true);
+        let error = false;
+        if (!value?.match(pattern) || value.length < 1 || value.length > 50) {
+          error = true;
         }
+        setSecretTextFieldError(error);
+        return;
+      }
+      case "otp": {
+        let error = false;
+        if (value.length > 0 && !value?.match(pattern)) {
+          error = true;
+        }
+        if (value.length > 50) {
+          error = true;
+        }
+        setOtpTextFieldError(error);
         return;
       }
       case "note": {
-        if (value.length >= 1 && value.length <= 1000) {
-          setNoteTextFieldError(false);
-        } else {
-          setNoteTextFieldError(true);
+        let error = false;
+        if (value.length > 1000) {
+          error = true;
         }
+        setNoteTextFieldError(error);
         return;
       }
       default: {
@@ -189,6 +206,7 @@ export function LoginItemFormDialog(props: Props): JSX.Element {
         path: formValues.path,
         username: formValues.username,
         secret: formValues.secret,
+        otp: formValues.otp,
         note: formValues.note
       }
     };
@@ -246,6 +264,20 @@ export function LoginItemFormDialog(props: Props): JSX.Element {
             value={formValues.secret}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               handleChange("secret", event.target.value)
+            }
+          />
+          {/* OTP text filed */}
+          <TextField
+            fullWidth
+            variant="outlined"
+            margin="dense"
+            id="otp"
+            label="One-time password"
+            type="text"
+            error={otpTextFieldError}
+            value={formValues.otp}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              handleChange("otp", event.target.value)
             }
           />
           {/* Note text filed */}

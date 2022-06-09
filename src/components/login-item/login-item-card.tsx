@@ -87,6 +87,7 @@ export default function LoginItemCard(props: Props): JSX.Element {
       path: item.attributes.path,
       username: item.attributes.username,
       secret: item.attributes.secret,
+      otp: item.attributes.otp,
       note: item.attributes.note
     };
     const response = await fetch(`/api/v1/${item.type}/${item.id}`, {
@@ -271,38 +272,50 @@ export default function LoginItemCard(props: Props): JSX.Element {
             <Collapse in={expanded} timeout="auto" unmountOnExit>
               <CardContent>
                 {/* Display item data */}
+                {/* The version section */}
                 <Typography paragraph color="textSecondary">
                   Version:
                 </Typography>
                 <Typography paragraph>{item.attributes.version}</Typography>
+                {/* The username section */}
                 <Typography paragraph color="textSecondary">
                   Username:
                 </Typography>
                 <Typography paragraph>{item.attributes.username}</Typography>
+                {/* The secret section */}
                 <Typography paragraph color="textSecondary">
                   Secret:
                 </Typography>
-                {/* Show secret */}
-                {showSecret && (
+                <Typography paragraph>
+                  {showSecret
+                    ? item.attributes.secret
+                    : item.attributes.secret.replace(/.?/g, "\u2022")}
+                </Typography>
+                {/* The OTP section */}
+                {item.attributes.otp && (
                   <>
-                    <Typography paragraph>{item.attributes.secret}</Typography>
-                  </>
-                )}
-                {/* Hide secret */}
-                {!showSecret && (
-                  <>
+                    <Typography paragraph color="textSecondary">
+                      One-time password:
+                    </Typography>
                     <Typography paragraph>
-                      {item.attributes.secret.replace(/.?/g, "\u2022")}
+                      {showSecret
+                        ? item.attributes.otp
+                        : item.attributes.otp.replace(/.?/g, "\u2022")}
                     </Typography>
                   </>
                 )}
-                <Typography
-                  paragraph
-                  color="textSecondary"
-                  style={{ whiteSpace: "pre-line" }}
-                >
-                  {item.attributes.note}
-                </Typography>
+                {/* The note section */}
+                {item.attributes.note && (
+                  <>
+                    <Typography
+                      paragraph
+                      color="textSecondary"
+                      style={{ whiteSpace: "pre-line" }}
+                    >
+                      {item.attributes.note}
+                    </Typography>
+                  </>
+                )}
                 <Divider />
                 <div className={classes.buttons}>
                   {/* Hide/Show button */}
@@ -310,7 +323,7 @@ export default function LoginItemCard(props: Props): JSX.Element {
                     className={classes.button}
                     size="small"
                     title={showSecret ? "Hide" : "Show"}
-                    onClick={() => setShowSecret(!showSecret)}
+                    onClick={() => setShowSecret((prevState) => !prevState)}
                   >
                     {showSecret ? <VisibilityOff /> : <VisibilityIcon />}
                   </Button>

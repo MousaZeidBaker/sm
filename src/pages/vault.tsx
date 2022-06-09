@@ -13,6 +13,7 @@ import Fuse from "fuse.js";
 import { useSnackbar } from "notistack";
 import React, { ChangeEvent } from "react";
 
+import { LoginItemDecryptedData } from "../backend/models/login/login-item";
 import { LoginItemApi } from "../backend/models/login/login-item-api";
 import { Layout } from "../components/layout";
 import LoginItemCard from "../components/login-item/login-item-card";
@@ -196,8 +197,9 @@ export default function Page(): JSX.Element {
             path: item.attributes.path,
             username: item.attributes.username,
             secret: item.attributes.secret,
+            otp: item.attributes.otp,
             note: item.attributes.note
-          }
+          } as LoginItemDecryptedData
         }
       })
     });
@@ -337,6 +339,7 @@ export default function Page(): JSX.Element {
               path: "/",
               username: "",
               secret: "",
+              otp: "",
               note: ""
             }
           }}

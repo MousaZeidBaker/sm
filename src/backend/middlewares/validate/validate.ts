@@ -5,7 +5,7 @@ import { logger } from "../../lib/logger/logger";
 
 const stringPattern = new RegExp(
   // eslint-disable-next-line no-useless-escape
-  /^[a-zA-Z0-9!\"#$%&'()*+,-./:;<=>?@[\\\]\^_`{\|}~]{1,50}$/m
+  /^[a-zA-Z0-9!\"#$%&'()*+,-./:;<=>?@[\\\]\^_`{\|}~]*$/m
 );
 
 /**
@@ -21,7 +21,8 @@ const loginItemAttributesSchema = Joi.object({
     .required(),
   username: Joi.string().min(1).max(50).pattern(stringPattern).required(),
   secret: Joi.string().min(1).max(50).pattern(stringPattern).required(),
-  note: Joi.string().min(1).max(1000).required()
+  otp: Joi.string().min(0).max(50).pattern(stringPattern).required(),
+  note: Joi.string().min(0).max(1000).required()
 });
 
 /**

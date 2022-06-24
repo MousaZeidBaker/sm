@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     border: 0
   },
   speedDial: {
-    position: "absolute",
+    position: "fixed",
     color: theme.palette.primary.main,
     bottom: theme.spacing(2),
     right: theme.spacing(2)
